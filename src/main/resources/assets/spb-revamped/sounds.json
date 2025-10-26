@@ -366,6 +366,11 @@
       "spb-revamped:infinite_grass/infinite_grass_ambience"
     ]
   },
+  "wind_tunnel_ambience": {
+    "sounds": [
+      "spb-revamped:level324/wind_tunnel_ambience"
+    ]
+  },
   "infinite_grass_soundevent": {
     "sounds": [
       "spb-revamped:infinite_grass/infinite_grass_soundevent1",
@@ -387,6 +392,13 @@
   "emergency_light_alarm": {
     "sounds": [
       "spb-revamped:emergency_light_alarm"
+    ]
+  },
+  "walker_footstep": {
+    "sounds": [
+      "spb-revamped:walker/footstep/walker-step",
+      "spb-revamped:walker/footstep/walker-step1",
+      "spb-revamped:walker/footstep/walker-step2"
     ]
   }
 }

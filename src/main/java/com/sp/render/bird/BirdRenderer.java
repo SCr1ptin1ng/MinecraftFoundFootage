@@ -160,9 +160,13 @@ public class BirdRenderer {
                 Random random = Random.create();
 
                 for (int i = 0; i < currentBirdCount; i++) {
-                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).x + (random.nextFloat() * 10)));
-                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).y + (random.nextFloat() * 10)));
-                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).z + (random.nextFloat() * 10)));
+//                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).x + (random.nextFloat() * 10)));
+//                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).y + (random.nextFloat() * 10)));
+//                    initialData.putFloat((float) (FlockManager.getFlockCenter((i) % ConfigStuff.birdQuality.getFlockCount()).z + (random.nextFloat() * 10)));
+
+                    initialData.putFloat(0);
+                    initialData.putFloat(100);
+                    initialData.putFloat(0);
 
                     initialData.putFloat(0);
                     initialData.putFloat(1);

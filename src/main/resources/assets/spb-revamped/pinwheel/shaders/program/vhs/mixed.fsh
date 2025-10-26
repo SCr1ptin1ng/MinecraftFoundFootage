@@ -38,6 +38,7 @@ uniform float GameTime;
 uniform vec2 Rand;
 uniform vec2 ScreenSize;
 uniform vec3 shadowColor;
+uniform int isLightning;
 
 
 
@@ -106,6 +107,10 @@ void main(){
     #ifdef LEVEL324
         color = linear_fog(color, length(viewPos), -10, 90, vec4(vec3(0), 1));
     #endif
+
+    if (isLightning == 1) {
+        color = texture(DiffuseSampler0, texCoord);
+    }
 
     fragColor = color;
 }

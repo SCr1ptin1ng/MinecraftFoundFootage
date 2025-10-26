@@ -85,6 +85,8 @@ public class ModSounds {
     public static final SoundEvent JUMPSCARE = registerSoundEvent("jumpscare");
     public static final SoundEvent SKINWALKER_RELEASE = registerSoundEvent("skinwalker_release");
 
+    public static final SoundEvent WALKER_FOOTSTEP = registerSoundEvent("walker_footstep");
+
     public static final SoundEvent SMILER_AMBIENCE = registerSoundEvent("smiler_laugh");
     public static final SoundEvent SMILER_GLITCH = registerSoundEvent("smiler_glitch");
 

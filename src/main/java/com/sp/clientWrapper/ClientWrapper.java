@@ -72,8 +72,13 @@ public class ClientWrapper {
             MinecraftClient client = MinecraftClient.getInstance();
             client.getSoundManager().play(new PositionedSoundInstance(ModSounds.SKINWALKER_FOOTSTEP, SoundCategory.HOSTILE, 10.0f, 1.0f, limb.random, limb.pos.x, limb.pos.y, limb.pos.z));
         }
+    }
 
-        limb.playedStepSound = true;
+    public static void walkerPlayStepSound(ServerLimb limb) {
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            MinecraftClient client = MinecraftClient.getInstance();
+            client.getSoundManager().play(new PositionedSoundInstance(ModSounds.WALKER_FOOTSTEP, SoundCategory.HOSTILE, 10.0f, 1.0f, limb.random, limb.pos.x, limb.pos.y, limb.pos.z));
+        }
     }
 
     public static void tickClientPlayerComponent(PlayerComponent playerComponent) {
@@ -97,9 +102,10 @@ public class ClientWrapper {
                     }
                 }
 
-                if (!isSeen) {
-                    playerComponent.setShouldGlitch(false);
-                }
+            }
+
+            if (!isSeen) {
+                playerComponent.setShouldGlitch(false);
             }
 
             //Update smiler glitch effect
@@ -120,7 +126,7 @@ public class ClientWrapper {
                     }
                 }
 
-            } else if (!playerComponent.isTeleportingToPoolrooms() && !(SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL) && playerComponent.player.getWorld().getBlockState(playerComponent.player.getBlockPos().offset(Direction.DOWN, 2)).isOf(Blocks.GREEN_WOOL))) {
+            } else if (!playerComponent.isTeleportingToPoolrooms() && (!(SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL) && playerComponent.player.getWorld().getBlockState(playerComponent.player.getBlockPos().offset(Direction.DOWN, 2)).isOf(Blocks.GREEN_WOOL)))) {
                 playerComponent.glitchTick = Math.max(playerComponent.glitchTick - 1, 0);
                 playerComponent.glitchTimer = Math.max((float) playerComponent.glitchTick / 80, 0.0f);
 
@@ -320,15 +326,18 @@ public class ClientWrapper {
 
             if ((levelKey == BackroomsLevels.LEVEL324_WORLD_KEY) && !soundManager.isPlaying(playerComponent.WindAmbience) && playerComponent.player.getY() > 20) {
                 playerComponent.WindAmbience = new InfiniteGrassAmbienceSoundInstance(playerComponent.player);
+                if (soundManager.isPlaying(playerComponent.WindTunnelAmbience)) {
+                    soundManager.stop(playerComponent.WindTunnelAmbience);
+                }
                 soundManager.play(playerComponent.WindAmbience);
             }
 
             if ((levelKey == BackroomsLevels.LEVEL324_WORLD_KEY) && !soundManager.isPlaying(playerComponent.WindTunnelAmbience) && playerComponent.player.getY() < 20) {
                 playerComponent.WindTunnelAmbience = new WindTunnelAmbienceSoundInstance(playerComponent.player);
-                soundManager.play(playerComponent.WindTunnelAmbience);
                 if (soundManager.isPlaying(playerComponent.WindAmbience)) {
                     soundManager.stop(playerComponent.WindAmbience);
                 }
+                soundManager.play(playerComponent.WindTunnelAmbience);
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -101,7 +101,7 @@ vec4 getReflection(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOff
     return color;
 }
 
-vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2){
+vec4 getPuddlesFrFr(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2, float height) {
     vec4 color = fragColor;
     vec4 mainTexture = texture(DiffuseSampler0, texCoord);
     float depth = texture(DepthSampler, texCoord).r;
@@ -112,10 +112,10 @@ vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset
     vec4 noise_2 = texture(NoiseTexture2, (worldSpace.xz * 0.5) * SCALE);
     noise = (clamp(smoothstep(0.1, 0.9, noise_2) * 0.2, 0.0, 1.0) + smoothstep(0.1, 0.9, noise));
 
-    if (worldSpace.y <= 21.001 && worldSpace.y >= 20.99 && length(viewSpace) <= 150){
+    if (worldSpace.y <= height + .001 && worldSpace.y >= height - .001 && length(viewSpace) <= 150) {
         noise = smoothstep(0.3, 0.7, noise);
         noise = clamp(noise, 0.0, 1.0);
-//        color = mainTexture;
+        //        color = mainTexture;
 
         //perfect reflections
         if (noise.r < 0.5){
@@ -138,4 +138,8 @@ vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset
     }
 
     return color;
+}
+
+vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2){
+    return getPuddlesFrFr(fragColor, texCoord, normal, cameraBobOffset, DiffuseSampler0, DepthSampler, NoiseTexture, NoiseTexture2, 21);
 }

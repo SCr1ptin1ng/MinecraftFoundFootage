@@ -31,6 +31,7 @@ import com.sp.util.TickTimer;
 import com.sp.world.levels.BackroomsLevel;
 import com.sp.world.levels.custom.InfiniteGrassBackroomsLevel;
 import com.sp.world.levels.custom.Level2BackroomsLevel;
+import com.sp.world.levels.custom.Level324Backroomslevel;
 import com.sp.world.levels.custom.PoolroomsBackroomsLevel;
 import de.maxhenkel.voicechat.voice.client.ClientManager;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -97,6 +98,7 @@ public class SPBRevampedClient implements ClientModInitializer {
     private static final Identifier GLITCH_SHADER = new Identifier(SPBRevamped.MOD_ID, "vhs/glitch");
 
     static boolean inBackrooms = false;
+    public static boolean isLightning = false;
     public static Camera camera;
     public static Vector3f cameraBobOffset;
 
@@ -400,6 +402,8 @@ public class SPBRevampedClient implements ClientModInitializer {
 
                         shaderProgram.setVector("shadowColor", PoolroomsDayCycle.getLightColor());
 
+                        shaderProgram.setInt("isLightning", isLightning ? 1 : 0);
+
                     }
 
                     shaderProgram = context.getShader(GLITCH_SHADER);
@@ -552,7 +556,7 @@ public class SPBRevampedClient implements ClientModInitializer {
                     }
 
                     getCurrentBackroomsLevel().ifPresent((backroomsLevel -> {
-                        if (backroomsLevel instanceof InfiniteGrassBackroomsLevel && ConfigStuff.birdQuality != BirdQuality.DISABLED) {
+                        if ((backroomsLevel instanceof InfiniteGrassBackroomsLevel || backroomsLevel instanceof Level324Backroomslevel) && ConfigStuff.birdQuality != BirdQuality.DISABLED) {
                             FlockManager.tick();
                         }
                     }));
@@ -631,6 +635,10 @@ public class SPBRevampedClient implements ClientModInitializer {
     }
 
     public static boolean isInLevel(BackroomsLevel level) {
+        if (MinecraftClient.getInstance().world == null) {
+            return false;
+        }
+
         return BackroomsLevels.isInBackroomsLevel(MinecraftClient.getInstance().world, level);
     }
 }

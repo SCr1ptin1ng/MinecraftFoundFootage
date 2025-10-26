@@ -4,7 +4,8 @@
   "definitions": [
     "WATER_REFLECTIONS",
     "BLOCK_REFLECTIONS",
-    "POOLROOMS"
+    "POOLROOMS",
+    "LEVEL324"
   ],
   "textures": {
     "WaterTexture": "spb-revamped:textures/shaders/water_noise.png",

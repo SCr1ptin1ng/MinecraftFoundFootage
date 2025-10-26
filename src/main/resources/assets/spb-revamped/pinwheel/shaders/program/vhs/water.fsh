@@ -220,7 +220,11 @@ void main() {
                 }
             }
         #else
-            fragColor = vanillaWater;
+            #ifdef LEVEL324
+                fragColor = vanillaWater * 0.2;
+            #else
+                fragColor = vanillaWater;
+            #endif
         #endif
     } else {
         fragColor = vec4(0.0);

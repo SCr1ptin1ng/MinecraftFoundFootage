@@ -1,7 +1,9 @@
 package com.sp.render.bird;
 
+import com.sp.SPBRevampedClient;
 import com.sp.compat.modmenu.ConfigStuff;
 import com.sp.entity.ik.util.MathUtil;
+import com.sp.init.BackroomsLevels;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.particle.ParticleTypes;
@@ -61,6 +63,14 @@ public class FlockManager {
             init();
         }
 
+        int maxY = 60;
+        int minY = 50;
+
+        if (SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL)) {
+            maxY = 120;
+            minY = 110;
+        }
+
         boolean shouldLerp = true;
         Random random = new Random();
         for (int i = 0; i < FLOCK_CENTERS.size(); i++) {
@@ -72,9 +82,9 @@ public class FlockManager {
 
             Vec3d localPos = flockingTarget.subtract(newPos);
 
-            if (newPos.y > 60 || newPos.y < 50) {
+            if (newPos.y > maxY || newPos.y < minY) {
                 velocity = new Vec3d(velocity.x, -velocity.y, velocity.z);
-                newPos = new Vec3d(newPos.x, newPos.y, newPos.z);
+                newPos = new Vec3d(newPos.x, Math.min(Math.max(newPos.y, minY), maxY), newPos.z);
             }
 
             if (Math.abs(localPos.x) > MAX_HORIZONTAL_DISTANCE) {
@@ -91,7 +101,13 @@ public class FlockManager {
                 MinecraftClient.getInstance().world.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, newPos.x, newPos.y, newPos.z, 0, 0, 0);
             }
 
-            FLOCK_VELOCITIES.set(i, velocity.normalize());
+            velocity = velocity.normalize();
+
+            if (SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL)) {
+                velocity = velocity.multiply(2);
+            }
+
+            FLOCK_VELOCITIES.set(i, velocity);
 
             moveFlockCenterTowards(newPos, i, shouldLerp);
         }

@@ -1,5 +1,6 @@
 package com.sp.entity.custom;
 
+import com.sp.clientWrapper.ClientWrapper;
 import com.sp.entity.ik.components.IKAnimatable;
 import com.sp.entity.ik.components.IKLegComponent;
 import com.sp.entity.ik.components.IKModelComponent;
@@ -39,7 +40,7 @@ public class WalkerEntity extends Entity implements GeoEntity, GeoAnimatable, IK
 
     private final Quaterniond rotation = new Quaterniond(0,0,0,1); // Default rotation facing down the Z-axis
     private final List<IKModelComponent<WalkerEntity>> components = new ArrayList<>();
-    private static final double SPEED_MULTIPLIER = 0.1;
+    private static final double SPEED_MULTIPLIER = 0.01;
     private static final double SQUARED_MAX_VELOCITY = 16; // 4.0 * 4.0
     public static final double TILTING_TEST_RANGE = 5.0;
     private static final double COLLISION_TEST_RANGE = 3;
@@ -57,12 +58,12 @@ public class WalkerEntity extends Entity implements GeoEntity, GeoAnimatable, IK
                         .maxStandingStillDistance(0.2)
                         .standStillCounter(20).build(),
                 List.of(
-                        new ServerLimb(2.984375, 0, 1.21875, (limb, legComponent, i, movementSpeed) -> {}),
-                        new ServerLimb(-2.984375, 0, 1.21875, (limb, legComponent, i, movementSpeed) -> {}),
-                        new ServerLimb(5.1875, 0, -1.25, (limb, legComponent, i, movementSpeed) -> {}),
-                        new ServerLimb(-5.1875, 0, -1.25, (limb, legComponent, i, movementSpeed) -> {}),
-                        new ServerLimb(3.875, 0, -3.875, (limb, legComponent, i, movementSpeed) -> {}),
-                        new ServerLimb(-3.875, 0, -3.875, (limb, legComponent, i, movementSpeed) -> {})
+                        new ServerLimb(2.984375, 0, 1.21875, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb)),
+                        new ServerLimb(-2.984375, 0, 1.21875, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb)),
+                        new ServerLimb(5.1875, 0, -1.25, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb)),
+                        new ServerLimb(-5.1875, 0, -1.25, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb)),
+                        new ServerLimb(3.875, 0, -3.875, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb)),
+                        new ServerLimb(-3.875, 0, -3.875, (limb, legComponent, i, movementSpeed) -> ClientWrapper.walkerPlayStepSound(limb))
                 ),
                 new BendReachingIKChain(this, new Segment.Builder().length(0.7).build(), new Segment.Builder().length(0.93).build(), new Segment.Builder().length(1.98).build(), new Segment.Builder().length(1.92).build(), new Segment.Builder().length(2).build()),
                 new BendReachingIKChain(this, new Segment.Builder().length(0.7).build(), new Segment.Builder().length(0.93).build(), new Segment.Builder().length(1.98).build(), new Segment.Builder().length(1.92).build(), new Segment.Builder().length(2).build()),

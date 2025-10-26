@@ -34,7 +34,7 @@ layout (std430, binding = 1) buffer IndirectBuffer {
     uint baseInstance;
 } indirectBuffer;
 
-uniform vec3[6] FlockCenters;
+uniform vec3[14] FlockCenters;
 uniform int FlockAmount;
 uniform int NumOfInstances;
 uniform float FrustumPlanes[24];
@@ -77,8 +77,9 @@ void main() {
     vec3 oldRotation = birdBuffer.birds[compactIndex].rotation;
     vec3 newRotation = birdBuffer.birds[compactIndex].rotation;
     vec3 position = birdBuffer.birds[compactIndex].position;
+    vec3 currentCenter = FlockCenters[compactIndex % (FlockAmount)];
 
-    if (!(distance(FlockCenters[compactIndex % FlockAmount], position) > 60)) {
+    if (!(distance(currentCenter, position) > 60)) {
         vec3 totalPosition = vec3(0.0);
         vec3 totalPositionDiffernece = vec3(0.0);
         vec3 totalRotation = vec3(0.0);
@@ -120,14 +121,19 @@ void main() {
             newRotation += getFixedDirection(vec3(normalize(totalRotation / float(otherCount)) * abs(smallestDistance - 2)), newRotation);
         }
 
-        newRotation += normalize(FlockCenters[compactIndex % FlockAmount] - position) * (distance(FlockCenters[compactIndex % FlockAmount], position) * .01);
+        newRotation += normalize(currentCenter - position) * (distance(currentCenter, position) * .01);
 
         newRotation = mix(normalize(newRotation), oldRotation, 0.6);
 
         position += normalize(newRotation) * .01;
+
+        #ifdef LEVEL324
+            position += normalize(newRotation) * .02;
+        #endif
     } else {
-        position = FlockCenters[compactIndex % FlockAmount] + vec3(rand(vec2(position.x, position.y)), rand(vec2(position.y, position.z)), rand(vec2(position.z, position.x))) * 4.0;
+        position = currentCenter + vec3(rand(vec2(position.x, position.y)), rand(vec2(position.y, position.z)), rand(vec2(position.z, position.x))) * 4.0;
     }
+    //position = currentCenter + vec3(rand(vec2(position.x, position.y)), rand(vec2(position.y, position.z)), rand(vec2(position.z, position.x))) * 4.0;
 
 
     birdBuffer.birds[compactIndex].position = position;
