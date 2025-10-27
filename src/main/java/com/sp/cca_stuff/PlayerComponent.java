@@ -8,6 +8,7 @@ import com.sp.mixininterfaces.ServerPlayNetworkSprint;
 import com.sp.sounds.voicechat.BackroomsVoicechatPlugin;
 import com.sp.world.levels.BackroomsLevel;
 import com.sp.world.levels.custom.Level2BackroomsLevel;
+import com.sp.world.levels.custom.Level324Backroomslevel;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.ClientTickingComponent;
@@ -247,7 +248,8 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
     }
 
     public boolean isTeleportingToPoolrooms() {
-        return BackroomsLevels.getLevel(this.player.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL) instanceof Level2BackroomsLevel && this.teleportingTimer > 0;
+        BackroomsLevel level = BackroomsLevels.getLevel(this.player.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL);
+        return (level instanceof Level2BackroomsLevel || level instanceof Level324Backroomslevel) && this.teleportingTimer > 0;
     }
 
     public boolean shouldNoClip() {

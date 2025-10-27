@@ -101,7 +101,20 @@ vec4 getReflection(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOff
     return color;
 }
 
-vec4 getPuddlesFrFr(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2, float height) {
+vec4 getPuddlesFrFr(
+    vec4 fragColor,
+    vec2 texCoord,
+    vec4 normal,
+    vec3 cameraBobOffset,
+    sampler2D DiffuseSampler0,
+    sampler2D DepthSampler,
+    sampler2D NoiseTexture,
+    sampler2D NoiseTexture2,
+    float height,
+    float fullReflectionGate,
+    float ditheredReflectionGate,
+    float wetGate
+) {
     vec4 color = fragColor;
     vec4 mainTexture = texture(DiffuseSampler0, texCoord);
     float depth = texture(DepthSampler, texCoord).r;
@@ -118,19 +131,19 @@ vec4 getPuddlesFrFr(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOf
         //        color = mainTexture;
 
         //perfect reflections
-        if (noise.r < 0.5){
+        if (noise.r < fullReflectionGate){ //0.4
             color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.02, DiffuseSampler0, DepthSampler);
             color = mix(color, mainTexture, noise) - (noise * 0.02);
             color -= (1.0 - noise) * 0.1;
         }
         //Dithered reflections
-        else if (noise.r < 0.8){
+        else if (noise.r < ditheredReflectionGate){ //0.9
             color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.4, DiffuseSampler0, DepthSampler);
             color = mix(color, mainTexture, noise) - (noise * 0.02);
             color -= (1.0 - noise) * 0.1;
         }
         //wet
-        else if (noise.r < 0.85){
+        else if (noise.r < wetGate){ //0.95
             color -= 0.015;
         }
 
@@ -141,5 +154,18 @@ vec4 getPuddlesFrFr(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOf
 }
 
 vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2){
-    return getPuddlesFrFr(fragColor, texCoord, normal, cameraBobOffset, DiffuseSampler0, DepthSampler, NoiseTexture, NoiseTexture2, 21);
+    return getPuddlesFrFr(
+        fragColor,
+        texCoord,
+        normal,
+        cameraBobOffset,
+        DiffuseSampler0,
+        DepthSampler,
+        NoiseTexture,
+        NoiseTexture2,
+        21,
+        .5,
+        .8,
+        .85
+    );
 }

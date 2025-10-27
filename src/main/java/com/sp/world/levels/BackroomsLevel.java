@@ -208,7 +208,7 @@ public abstract class BackroomsLevel {
     public int getTransitionDuration() {return 0;}
 
     /**
-     * @param duration How many thicks the transition should take.
+     * @param duration How many ticks the transition should take.
      * @param callback The callback to call every tick during the transition. <b>Note:</b> The last tick which is called is 1. Not 0. The teleport happens on 0.
      * @param teleport The teleport to perform when the transition is done.
      * @param cancel The callback to call when the transition is cancelled. <b>Note:</b> This is currently not used as canceling transitions has proven very buggy.

@@ -44,9 +44,15 @@
             "out": "spb-revamped:everything_wbloom"
         },
         {
+          "type": "veil:blit",
+          "shader": "spb-revamped:vhs/light_cone",
+          "in": "spb-revamped:everything_wbloom",
+          "out": "spb-revamped:light_cones"
+        },
+        {
             "type": "veil:blit",
             "shader": "spb-revamped:vhs/vhs_post",
-            "in": "spb-revamped:everything_wbloom",
+            "in": "spb-revamped:light_cones",
             "out": "swap"
         },
         {

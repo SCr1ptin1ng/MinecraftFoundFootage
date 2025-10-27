@@ -7,7 +7,7 @@ layout(location = 1) in vec3 Normal;
 
 struct BirdData {
     vec3 position;
-    vec3 rotation; // or whatever your second vec3 represents
+    vec3 rotation;
 };
 
 layout (std430, binding = 0) buffer BirdBuffer {

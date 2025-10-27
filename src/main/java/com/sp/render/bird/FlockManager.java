@@ -1,9 +1,7 @@
 package com.sp.render.bird;
 
-import com.sp.SPBRevampedClient;
 import com.sp.compat.modmenu.ConfigStuff;
 import com.sp.entity.ik.util.MathUtil;
-import com.sp.init.BackroomsLevels;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.particle.ParticleTypes;
@@ -66,10 +64,12 @@ public class FlockManager {
         int maxY = 60;
         int minY = 50;
 
+        /*
         if (SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL)) {
-            maxY = 120;
-            minY = 110;
+            maxY = 90;
+            minY = maxY - 10;
         }
+         */
 
         boolean shouldLerp = true;
         Random random = new Random();
@@ -103,9 +103,11 @@ public class FlockManager {
 
             velocity = velocity.normalize();
 
+            /*
             if (SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL)) {
                 velocity = velocity.multiply(2);
             }
+             */
 
             FLOCK_VELOCITIES.set(i, velocity);
 

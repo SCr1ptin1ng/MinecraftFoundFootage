@@ -126,8 +126,8 @@ vec3 getVolumetricLight(vec4 incolor, vec2 texCoord, vec3 viewPos, vec2 ScreenSi
 
     //VOLUMETRIC LIGHT
     if(sunsetTimer < 0.35 || sunsetTimer > 0.6) {
-        vec3 ro = VeilCamera.CameraPosition;
-        vec3 rd = normalize(viewToPlayerSpace(viewPos) + dither(texCoord, ScreenSize, 0.9) * 0.5);
+        vec3 rayOrigin = VeilCamera.CameraPosition;
+        vec3 rayDirection = normalize(viewToPlayerSpace(viewPos) + dither(texCoord, ScreenSize, 0.9) * 0.5);
             //
         float maxDist = 80.0;
         float dist = 0.0;
@@ -135,14 +135,14 @@ vec3 getVolumetricLight(vec4 incolor, vec2 texCoord, vec3 viewPos, vec2 ScreenSi
 
         //raymarch
         for (int i = 0; i <= 150; i++) {
-            vec3 rp = ro + rd * dist;
+            vec3 rayPosition = rayOrigin + rayDirection * dist;
 
 
             if (dist > worldDepth){
                 break;
             }
 
-            vec3 playerSpace = rp - ro;
+            vec3 playerSpace = rayPosition - rayOrigin;
             vec3 shadowScreenSpace = getShadowCoords(playerSpace, viewMatrix, orthographMatrix);
             float shadowDepth = shadowScreenSpace.z;
             float shadowSampler = texture(ShadowSampler, shadowScreenSpace.xy).r;

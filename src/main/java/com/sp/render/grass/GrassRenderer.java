@@ -44,6 +44,7 @@ public class GrassRenderer {
 
     private int lastGrassCount;
     private int lastMeshResolution;
+    private float lastHeight;
     private ByteBuffer cmd;
 
     private float getGrassHeight() {
@@ -51,7 +52,7 @@ public class GrassRenderer {
             return 1.5f;
         }
 
-        return 1;
+        return 1f;
     }
 
     public static final VertexFormat POSITION_NORMAL = new VertexFormat(
@@ -91,7 +92,9 @@ public class GrassRenderer {
         fbo.bind(false);
 
         //*If there is a change in the grass count or resolution, update the buffers
-        if(ConfigStuff.grassQuality.getCount() != this.lastGrassCount || ConfigStuff.grassQuality.getResolution() != this.lastMeshResolution) {
+        if(ConfigStuff.grassQuality.getCount() != this.lastGrassCount ||
+                ConfigStuff.grassQuality.getResolution() != this.lastMeshResolution ||
+                getGrassHeight() != lastHeight) {
             if (this.vertexBuffer != null) {
                 this.vertexBuffer.close();
             }
@@ -156,8 +159,10 @@ public class GrassRenderer {
     private void updateBuffers(boolean init){
         int currentGrassCount = ConfigStuff.grassQuality.getCount();
         int currentMeshResolution = ConfigStuff.grassQuality.getResolution();
+        float currentHeight = getGrassHeight();
         boolean countChange = currentGrassCount != this.lastGrassCount;
         boolean resolutionChange = currentMeshResolution != this.lastMeshResolution;
+        boolean heightChange = currentHeight != this.lastHeight;
 
         if(countChange) {
             //*Update positions buffer size
@@ -201,6 +206,7 @@ public class GrassRenderer {
 
         if(countChange)this.lastGrassCount = currentGrassCount;
         if(resolutionChange)this.lastMeshResolution = currentMeshResolution;
+        if(heightChange)this.lastHeight = currentHeight;
 
     }
 
@@ -259,11 +265,11 @@ public class GrassRenderer {
         for(int i = 0; i < segments; i++){
             bufferBuilder.vertex(0.6-xStep*(i+1),getGrassHeight()/segments*(i+1),0).normal(0,0,1).next();
             bufferBuilder.vertex(0.4+xStep*(i+1),getGrassHeight()/segments*(i+1),0).normal(0,0,1).next();
-            bufferBuilder.vertex(0.4+xStep*(i),getGrassHeight()/segments*i,0)      .normal(0,0,1).next();
-            bufferBuilder.vertex(0.6-xStep*(i),getGrassHeight()/segments*i,0)      .normal(0,0,1).next();
+            bufferBuilder.vertex(0.4+xStep*(i),  getGrassHeight()/segments*i,    0).normal(0,0,1).next();
+            bufferBuilder.vertex(0.6-xStep*(i),  getGrassHeight()/segments*i,    0).normal(0,0,1).next();
 
-            bufferBuilder.vertex(0.6-xStep*(i),getGrassHeight()/segments*i,0)      .normal(0,0,-1).next();
-            bufferBuilder.vertex(0.4+xStep*(i),getGrassHeight()/segments*i,0)      .normal(0,0,-1).next();
+            bufferBuilder.vertex(0.6-xStep*(i),  getGrassHeight()/segments*i,    0).normal(0,0,-1).next();
+            bufferBuilder.vertex(0.4+xStep*(i),  getGrassHeight()/segments*i,    0).normal(0,0,-1).next();
             bufferBuilder.vertex(0.4+xStep*(i+1),getGrassHeight()/segments*(i+1),0).normal(0,0,-1).next();
             bufferBuilder.vertex(0.6-xStep*(i+1),getGrassHeight()/segments*(i+1),0).normal(0,0,-1).next();
         }

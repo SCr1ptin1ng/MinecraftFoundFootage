@@ -108,7 +108,19 @@ void main() {
             }
 
             #ifdef LEVEL324
-            color = getPuddlesFrFr(color, texCoord, vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1.0), cameraBobOffset, DiffuseSampler0, TransparentDepthSampler, NoiseTexture, NoiseTexture2, 1);
+                color = getPuddlesFrFr(
+                color,
+                texCoord,
+                vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1),
+                cameraBobOffset,
+                DiffuseSampler0,
+                TransparentDepthSampler,
+                NoiseTexture,
+                NoiseTexture2,
+                1,
+                .4,
+                .7,
+                .75);
 
 
             float depth = texture(DepthSampler, texCoord).r;
@@ -116,7 +128,18 @@ void main() {
             vec3 worldSpace = viewToWorldSpace(viewSpace);
 
             if (!((worldSpace.z > 0 && worldSpace.z < 27) && (worldSpace.x > 33 && worldSpace.x < 56))) {
-                color = getPuddlesFrFr(color, texCoord, vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1.0), cameraBobOffset, DiffuseSampler0, TransparentDepthSampler, NoiseTexture, NoiseTexture2, 65);
+                    color = getPuddlesFrFr(
+                    color,
+                    texCoord,
+                    vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1.0),
+                    cameraBobOffset, DiffuseSampler0,
+                    TransparentDepthSampler,
+                    NoiseTexture,
+                    NoiseTexture2,
+                    65,
+                    .4,
+                    .9,
+                    .95);
             }
 
             #endif

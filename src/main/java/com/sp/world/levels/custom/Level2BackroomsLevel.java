@@ -30,13 +30,7 @@ public class Level2BackroomsLevel extends BackroomsLevel {
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();
 
-            int exitRadius = ConfigStuff.exitSpawnRadius;
-
-            if (world.getServer() != null) {
-                if (world.getServer().isDedicated()) {
-                    exitRadius = ((NewServerProperties) ((MinecraftDedicatedServer) world.getServer()).getProperties()).getExitSpawnRadius();
-                }
-            }
+            int exitRadius = SPBRevamped.getExitSpawnRadius(world);
 
             if (from instanceof Level2BackroomsLevel && Math.abs(playerComponent.player.getPos().getZ()) >= exitRadius) {
                 playerList.add(getPoolRoomsTransition(playerComponent));

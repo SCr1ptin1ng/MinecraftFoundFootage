@@ -13,6 +13,7 @@ import com.sp.entity.ik.model.GeckoLib.MowzieModelFactory;
 import com.sp.entity.ik.util.PrAnCommonClass;
 import com.sp.init.*;
 import com.sp.item.ModItemGroups;
+import com.sp.mixininterfaces.NewServerProperties;
 import com.sp.networking.InitializePackets;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
@@ -28,9 +29,11 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.GeckoLib;
@@ -156,4 +159,16 @@ public class SPBRevamped implements ModInitializer {
 		buffer.writeInt(time);
 		ServerPlayNetworking.send(player, InitializePackets.LEVEL_TRANSITION_LIGHTSOUT, buffer);
 	}
+
+    public static int getExitSpawnRadius(World world) {
+        int exitRadius = ConfigStuff.exitSpawnRadius;
+
+        if (world.getServer() != null) {
+            if (world.getServer().isDedicated()) {
+                exitRadius = ((NewServerProperties) ((MinecraftDedicatedServer) world.getServer()).getProperties()).getExitSpawnRadius();
+            }
+        }
+
+        return exitRadius;
+    }
 }
