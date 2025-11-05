@@ -73,10 +73,9 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
+import org.joml.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
@@ -231,7 +230,7 @@ public class SPBRevampedClient implements ClientModInitializer {
                     }
                 }
 
-                if (clientWorld.getRegistryKey() == BackroomsLevels.INFINITE_FIELD_WORLD_KEY/* || clientWorld.getRegistryKey() == BackroomsLevels.LEVEL324_WORLD_KEY*/) {
+                if (clientWorld.getRegistryKey() == BackroomsLevels.INFINITE_FIELD_WORLD_KEY) {
                     if (stage == Stage.AFTER_SOLID_BLOCKS) {
                         if (this.grassRenderer == null) {
                             this.grassRenderer = new GrassRenderer();
@@ -253,6 +252,14 @@ public class SPBRevampedClient implements ClientModInitializer {
                                 this.birdRenderer.render();
                             }
                         }
+                    }
+                } else if (clientWorld.getRegistryKey() == BackroomsLevels.LEVEL324_WORLD_KEY) {
+                    if (stage == Stage.AFTER_SOLID_BLOCKS) {
+                        if (this.grassRenderer == null) {
+                            this.grassRenderer = new GrassRenderer();
+                        }
+
+                        this.grassRenderer.render();
                     }
                 } else if(this.grassRenderer != null) {
                     this.grassRenderer.close();
@@ -392,6 +399,7 @@ public class SPBRevampedClient implements ClientModInitializer {
                         } else {
                             shaderProgram.setInt("TogglePuddles", 0);
                         }
+
 
                         shaderProgram.setVector("shadowColor", PoolroomsDayCycle.getLightColor());
                     }

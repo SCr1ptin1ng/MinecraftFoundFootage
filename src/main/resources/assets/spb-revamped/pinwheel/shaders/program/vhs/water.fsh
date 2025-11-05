@@ -39,7 +39,6 @@ out vec4 fragColor;
 const float rayStep = 0.04;
 const int maxSteps = 175;
 
-
 float brightness(vec4 color){
     return (color.r + color.g + color.b) / 3.0;
 }
@@ -200,6 +199,9 @@ void main() {
             #ifdef WATER_REFLECTIONS
                 fragColor = getReflection(fragColor, mix(vec4(worldToViewSpaceDirection(normalize(vec3(0.0, 1.0,0.0))), 1.0), normal, 0.2), waterDepth, texCoord, viewPos, 0.0) * vec4(vec3(0.0, 1.2, 1.2), 1.0);
             #endif
+
+
+            fragColor += mix(fragColor, fragColor + vec4(0, 0.3, 0.1, 0), abs(abs((abs(sunsetTimer - .5) * 2) - .5) - .5) * 2);
 
             if (shadow >= 1.0){
                 if(sunsetTimer <= 0.27 || (sunsetTimer >= 0.46 && sunsetTimer <= 0.67) || sunsetTimer >= 0.70){

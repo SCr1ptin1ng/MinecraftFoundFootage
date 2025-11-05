@@ -18,6 +18,7 @@
     "cutscene.PathAccessor",
     "rain.AlwaysRainLevelPropertiesMixin",
     "rain.LightningSkyLightingUpLightningEntity",
+    "rain.ServerWorldNoHorseTrapMixin",
     "respawnsystem.PlayerManagerMixin",
     "skinstolen.ServerPlayerEntityMixin",
     "soundphysicsremasteredcompat.AllowedSoundsConfigMixin",

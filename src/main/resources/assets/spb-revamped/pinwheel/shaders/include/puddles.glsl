@@ -101,6 +101,81 @@ vec4 getReflection(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOff
     return color;
 }
 
+const int MAX_PUDDLE_CENTERS = 16;
+
+vec4 getPuddlesFrFrFr(
+    vec4 fragColor,
+    vec2 texCoord,
+    vec4 normal,
+    vec3 cameraBobOffset,
+    sampler2D DiffuseSampler0,
+    sampler2D DepthSampler,
+    sampler2D NoiseTexture,
+    sampler2D NoiseTexture2,
+    float height,
+    float fullReflectionGate,
+    float ditheredReflectionGate,
+    float wetGate,
+    vec2[MAX_PUDDLE_CENTERS] puddleCenters,
+    int puddleCentersCount
+) {
+
+    vec4 color = fragColor;
+    vec4 mainTexture = texture(DiffuseSampler0, texCoord);
+    float depth = texture(DepthSampler, texCoord).r;
+    vec3 viewSpace = viewPosFromDepth(depth, texCoord);
+    vec3 worldSpace = viewToWorldSpace(viewSpace);
+
+    vec4 noise = texture(NoiseTexture, (worldSpace.xz * 0.02) * SCALE);
+    vec4 noise_2 = texture(NoiseTexture2, (worldSpace.xz * 0.5) * SCALE);
+    noise = (clamp(smoothstep(0.1, 0.9, noise_2) * 0.2, 0.0, 1.0) + smoothstep(0.1, 0.9, noise));
+
+    float maxDistance = 10;
+
+    if (worldSpace.y <= height + .001 && worldSpace.y >= height - .001 && length(viewSpace) <= 150) {
+
+        if (puddleCentersCount > 0) {
+            float distance = 0;
+            for (int i = 0; i < puddleCentersCount; i++) {
+                float dist = min(length(worldSpace.xz - puddleCenters[i]), maxDistance);
+                if (i == 0 || dist < distance) {
+                    distance = dist;
+                }
+            }
+
+            noise *= distance / maxDistance;
+            if (distance < maxDistance && noise.r < fullReflectionGate) {
+                color.xyz *= ((noise.r * 3) * (((distance / maxDistance))));
+            }
+        }
+
+        noise = smoothstep(0.3, 0.7, noise);
+        noise = clamp(noise, 0.0, 1.0);
+        //        color = mainTexture;
+
+        //perfect reflections
+        if (noise.r < fullReflectionGate) { //0.4
+            color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.02, DiffuseSampler0, DepthSampler);
+            color = mix(color, mainTexture, noise) - (noise * 0.02);
+            color -= (1.0 - noise) * 0.1;
+        }
+        //Dithered reflections
+        else if (noise.r < ditheredReflectionGate) { //0.9
+            color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.4, DiffuseSampler0, DepthSampler);
+            color = mix(color, mainTexture, noise) - (noise * 0.02);
+            color -= (1.0 - noise) * 0.1;
+        }
+        //wet
+        else if (noise.r < wetGate) { //0.95
+            color -= 0.015;
+        }
+
+        //else don't change the color at all (dry)
+    }
+
+    return color;
+}
+
 vec4 getPuddlesFrFr(
     vec4 fragColor,
     vec2 texCoord,
@@ -115,42 +190,24 @@ vec4 getPuddlesFrFr(
     float ditheredReflectionGate,
     float wetGate
 ) {
-    vec4 color = fragColor;
-    vec4 mainTexture = texture(DiffuseSampler0, texCoord);
-    float depth = texture(DepthSampler, texCoord).r;
-    vec3 viewSpace = viewPosFromDepth(depth, texCoord);
-    vec3 worldSpace = viewToWorldSpace(viewSpace);
+    vec2[MAX_PUDDLE_CENTERS] puddleCenters;
 
-    vec4 noise = texture(NoiseTexture, (worldSpace.xz * 0.02) * SCALE);
-    vec4 noise_2 = texture(NoiseTexture2, (worldSpace.xz * 0.5) * SCALE);
-    noise = (clamp(smoothstep(0.1, 0.9, noise_2) * 0.2, 0.0, 1.0) + smoothstep(0.1, 0.9, noise));
-
-    if (worldSpace.y <= height + .001 && worldSpace.y >= height - .001 && length(viewSpace) <= 150) {
-        noise = smoothstep(0.3, 0.7, noise);
-        noise = clamp(noise, 0.0, 1.0);
-        //        color = mainTexture;
-
-        //perfect reflections
-        if (noise.r < fullReflectionGate){ //0.4
-            color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.02, DiffuseSampler0, DepthSampler);
-            color = mix(color, mainTexture, noise) - (noise * 0.02);
-            color -= (1.0 - noise) * 0.1;
-        }
-        //Dithered reflections
-        else if (noise.r < ditheredReflectionGate){ //0.9
-            color = getReflection(color, normal, viewSpace, cameraBobOffset, 0.4, DiffuseSampler0, DepthSampler);
-            color = mix(color, mainTexture, noise) - (noise * 0.02);
-            color -= (1.0 - noise) * 0.1;
-        }
-        //wet
-        else if (noise.r < wetGate){ //0.95
-            color -= 0.015;
-        }
-
-        //else don't change the color at all (dry)
-    }
-
-    return color;
+    return getPuddlesFrFrFr(
+        fragColor,
+        texCoord,
+        normal,
+        cameraBobOffset,
+        DiffuseSampler0,
+        DepthSampler,
+        NoiseTexture,
+        NoiseTexture2,
+        height,
+        fullReflectionGate,
+        ditheredReflectionGate,
+        wetGate,
+        puddleCenters,
+        0
+    );
 }
 
 vec4 getPuddles(vec4 fragColor, vec2 texCoord, vec4 normal, vec3 cameraBobOffset, sampler2D DiffuseSampler0, sampler2D DepthSampler, sampler2D NoiseTexture, sampler2D NoiseTexture2){

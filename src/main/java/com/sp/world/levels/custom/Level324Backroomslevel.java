@@ -9,6 +9,7 @@ import com.sp.world.generation.chunk_generator.Level324ChunkGenerator;
 import com.sp.world.levels.BackroomsLevel;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -29,6 +30,34 @@ public class Level324Backroomslevel extends BackroomsLevel {
                     hasGrassBeneath(playerComponent) &&
                     playerComponent.player.getPos().squaredDistanceTo(new Vec3d(0, 65, 0)) >= (double) ((exitRadius / 3) * (exitRadius / 3)) ) {
                 playerList.add(getInfiniteFieldsTransition(playerComponent));
+            }
+
+
+            Vec2f[] puddleLocations = new Vec2f[]{
+                    new Vec2f(300.0f, 0.0f),
+                    new Vec2f(-300.0f, 0.0f),
+                    new Vec2f(0.0f, 300.0f),
+                    new Vec2f(0.0f, -300.0f),
+                    new Vec2f(150.0f, 150.0f),
+                    new Vec2f(150.0f, -150.0f),
+                    new Vec2f(-150.0f, 150.0f),
+                    new Vec2f(-150.0f, -150.0f),
+                    new Vec2f(100.0f, 200.0f),
+                    new Vec2f(100.0f, -200.0f),
+                    new Vec2f(-100.0f, 200.0f),
+                    new Vec2f(-100.0f, -200.0f),
+                    new Vec2f(200.0f, 100.0f),
+                    new Vec2f(-200.0f, 100.0f),
+                    new Vec2f(200.0f, -100.0f),
+                    new Vec2f(-200.0f, -100.0f)
+            };
+
+            if (from instanceof Level324Backroomslevel && playerComponent.player.getY() < 20) {
+                for (Vec2f vec2f : puddleLocations) {
+                    if (4 > vec2f.distanceSquared(new Vec2f((float) playerComponent.player.getX(), (float) playerComponent.player.getZ()))) {
+                        playerList.add(getPoolRoomsTransition(playerComponent));
+                    }
+                }
             }
 
             return playerList;
@@ -73,6 +102,45 @@ public class Level324Backroomslevel extends BackroomsLevel {
                         BackroomsLevels.INFINITE_FIELD_BACKROOMS_LEVEL.getSpawnPos(),
                         this,
                         BackroomsLevels.INFINITE_FIELD_BACKROOMS_LEVEL
+                ),
+                (teleport, tick) -> {
+                    teleport.playerComponent().setShouldNoClip(false);
+                    teleport.playerComponent().sync();
+                }); // Cancel
+    }
+
+    private LevelTransition getPoolRoomsTransition(PlayerComponent playerComponent) {
+        return new LevelTransition(
+                10,
+                (teleport, tick) -> {
+                    World world = teleport.playerComponent().player.getWorld();
+                    if (tick == 9) {
+                        teleport.playerComponent().setShouldNoClip(true);
+                        teleport.playerComponent().sync();
+                    }
+
+                    if (world.isClient()) {
+                        if (tick == 4) {
+                            SPBRevampedClient.getCutsceneManager().blackScreen.showBlackScreen(20, true, false);
+                        }
+                        return;
+                    }
+
+                    if (tick == 4) {
+                        SPBRevamped.sendBlackScreenPacket((ServerPlayerEntity) teleport.playerComponent().player, 20, true, false);
+                    }
+
+                    //After the screen turns black THEN teleport
+                    if (tick == 1) {
+                        teleport.playerComponent().setShouldNoClip(false);
+                        teleport.playerComponent().sync();
+                    }
+                }, // Tick
+                new CrossDimensionTeleport(
+                        playerComponent,
+                        BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL.getSpawnPos(),
+                        this,
+                        BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL
                 ),
                 (teleport, tick) -> {
                     teleport.playerComponent().setShouldNoClip(false);

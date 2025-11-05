@@ -108,19 +108,43 @@ void main() {
             }
 
             #ifdef LEVEL324
-                color = getPuddlesFrFr(
-                color,
-                texCoord,
-                vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1),
-                cameraBobOffset,
-                DiffuseSampler0,
-                TransparentDepthSampler,
-                NoiseTexture,
-                NoiseTexture2,
-                1,
-                .4,
-                .7,
-                .75);
+
+            vec2[MAX_PUDDLE_CENTERS] puddleCenters = vec2[MAX_PUDDLE_CENTERS](
+                vec2(300.0,  0.0),
+                vec2(-300.0, 0.0),
+                vec2(0.0,    300.0),
+                vec2(0.0,   -300.0),
+                vec2(150.0,  150.0),
+                vec2(150.0, -150.0),
+                vec2(-150.0, 150.0),
+                vec2(-150.0,-150.0),
+                vec2(100.0, 200.0),
+                vec2(100.0, -200.0),
+                vec2(-100.0, 200.0),
+                vec2(-100.0, -200.0),
+                vec2(200.0, 100.0),
+                vec2(-200.0, 100.0),
+                vec2(200.0, -100.0),
+                vec2(-200.0, -100.0)
+            );
+
+            int puddleCentersCount = MAX_PUDDLE_CENTERS;
+
+            color = getPuddlesFrFrFr(
+            color,
+            texCoord,
+            vec4(worldToViewSpaceDirection(normalize(vec3(0.0,1.0,0.0))), 1),
+            cameraBobOffset,
+            DiffuseSampler0,
+            TransparentDepthSampler,
+            NoiseTexture,
+            NoiseTexture2,
+            1,
+            .4,
+            .7,
+            .75,
+            puddleCenters,
+            puddleCentersCount);
 
 
             float depth = texture(DepthSampler, texCoord).r;
