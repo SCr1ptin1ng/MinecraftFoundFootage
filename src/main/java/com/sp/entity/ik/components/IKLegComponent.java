@@ -175,7 +175,7 @@ public class IKLegComponent<C extends IKChain, E extends IKAnimatable<E>> extend
     }
 
     double getMaxLegFormTargetDistance(Entity entity) {
-        if (this.stillStandCounter >= this.settings.get(0).standStillCounter() && hasMovedOverLastTick(entity)) {
+        if (/*this.stillStandCounter >= this.settings.get(0).standStillCounter() && */hasMovedOverLastTick(entity)) {
             this.stillStandCounter = 0;
         } else if (this.stillStandCounter < this.settings.get(0).standStillCounter()) {
             this.stillStandCounter += 1;

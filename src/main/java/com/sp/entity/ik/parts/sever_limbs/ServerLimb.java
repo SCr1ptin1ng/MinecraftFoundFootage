@@ -22,15 +22,16 @@ public class ServerLimb {
     public TimedDistanceFunction currentDistanceFunction = null;
     public final Random random = Random.create();
     public boolean playedStepSound;
-    public StepCallback stepCallback = ((limb, legComponent, i, movementSpeed) -> {
-    });
+    public StepCallback stepCallback;
 
     public ServerLimb(Vec3d baseOffset, StepCallback stepCallback) {
         this.baseOffset = baseOffset;
+        this.stepCallback = stepCallback;
     }
 
     public ServerLimb(double x, double y, double z, StepCallback stepCallback) {
         this.baseOffset = new Vec3d(x, y, z);
+        this.stepCallback = stepCallback;
     }
 
     public void set(Vec3d newPos) {
@@ -59,7 +60,7 @@ public class ServerLimb {
             this.currentDistanceFunction = new TimedDistanceFunction(legComponent.getSettings().get(i).steppingParabolaStrength() , this.target.y - this.oldTarget.y);
         }
 
-        if (/*!adjacentEndPointGrounded(legComponent.getEndPoints(), i)*/ !legComponent.getEndPoints().get(horizontal(i)).isGrounded()) {
+        if (!adjacentEndPointGrounded(legComponent.getEndPoints(), i)) {
             return;
         }
 

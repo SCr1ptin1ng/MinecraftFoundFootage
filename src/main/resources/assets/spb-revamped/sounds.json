@@ -396,9 +396,7 @@
   },
   "walker_footstep": {
     "sounds": [
-      "spb-revamped:walker/footstep/walker-step",
-      "spb-revamped:walker/footstep/walker-step1",
-      "spb-revamped:walker/footstep/walker-step2"
+      "spb-revamped:walker/footstep/walker-step"
     ]
   }
 }

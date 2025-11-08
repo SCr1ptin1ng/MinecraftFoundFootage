@@ -72,5 +72,7 @@ public class AllowedSoundsConfigMixin {
         map.put(ModSounds.WINDTUNNEL_GRASS_AMBIENCE.getId().toString(), false);
 
         map.put(ModSounds.EMERGENCY_LIGHT_ALARM.getId().toString(), false);
+
+        map.put(ModSounds.WALKER_FOOTSTEP.getId().toString(), false);
     }
 }
