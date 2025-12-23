@@ -4,11 +4,12 @@ import com.sp.SPBRevamped;
 import com.sp.cca_stuff.InitializeComponents;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.init.BackroomsLevels;
+import com.sp.world.events.generic.lights.LightLevelFlicker;
 import com.sp.world.events.level1.Level1Ambience;
 import com.sp.world.events.level1.Level1Blackout;
-import com.sp.world.events.level1.Level1Flicker;
 import com.sp.world.generation.chunk_generator.Level1ChunkGenerator;
 import com.sp.world.levels.BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,8 +19,8 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Level1BackroomsLevel extends BackroomsLevel {
-    private Level0BackroomsLevel.LightState lightState = Level0BackroomsLevel.LightState.ON;
+public class Level1BackroomsLevel extends BackroomsLevel implements BackroomsLevelWithLights {
+    private Level0BackroomsLevel.LightState lightState = BackroomsLevelWithLights.LightState.ON;
 
     public Level1BackroomsLevel() {
         super("level1", Level1ChunkGenerator.CODEC, new RoomCount(6, 24, 24, 12, 24), new Vec3d(6, 22, 3), BackroomsLevels.LEVEL1_WORLD_KEY);
@@ -29,9 +30,9 @@ public class Level1BackroomsLevel extends BackroomsLevel {
     public void register() {
         super.register();
 
-        this.registerEvents("blackout", Level1Blackout::new);
-        this.registerEvents("flicker", Level1Flicker::new);
-        this.registerEvents("ambience", Level1Ambience::new);
+        this.registerEvent("blackout", Level1Blackout::new);
+        this.registerEvent("flicker", LightLevelFlicker::new);
+        this.registerEvent("ambience", Level1Ambience::new);
 
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();
@@ -96,7 +97,7 @@ public class Level1BackroomsLevel extends BackroomsLevel {
 
     @Override
     public void readFromNbt(NbtCompound nbt) {
-        this.lightState = Level0BackroomsLevel.LightState.valueOf(nbt.getString("lightState"));
+        this.lightState = BackroomsLevelWithLights.LightState.valueOf(nbt.getString("lightState"));
 
     }
 

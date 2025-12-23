@@ -20,6 +20,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Matrix4f;
+import org.joml.Quaterniond;
+import org.joml.Quaternionf;
 import org.joml.Vector3d;
 
 import java.util.ArrayList;
@@ -66,6 +68,7 @@ public class IKWalkerComponent<C extends IKChain, E extends IKAnimatable<E>> ext
                     Vec3d newModelPosWorldSpace = MathUtil.rotatePointOnAPlaneAround(entity.getPos(), entity.getPos(), -180, new Vec3d(0, 1, 0));
 
                     xformOverride = xformOverride.translate(newModelPosWorldSpace.toVector3f());
+                    //xformOverride.rotate(new Quaternionf(entity.getRotation().x, entity.getRotation().y, -entity.getRotation().z, entity.getRotation().w));
 
                     xformOverride.rotateYXZ((float) -Math.toRadians(entity.getYaw()), (float) -Math.toRadians(entity.getPitch() + 90), 0);
 

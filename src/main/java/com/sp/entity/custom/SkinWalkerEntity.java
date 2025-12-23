@@ -12,6 +12,7 @@ import com.sp.entity.ik.components.IKModelComponent;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModSounds;
 import com.sp.sounds.entity.SkinWalkerChaseSoundInstance;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level0BackroomsLevel;
 import foundry.veil.api.client.util.Easings;
 import net.minecraft.entity.Entity;
@@ -218,13 +219,13 @@ public class SkinWalkerEntity extends HostileEntity implements GeoEntity, GeoAni
 
             if (this.ticks == 110) {
                 if (backroomsLevel instanceof Level0BackroomsLevel level) {
-                    level.setLightState(Level0BackroomsLevel.LightState.FLICKER);
+                    level.setLightState(BackroomsLevelWithLights.LightState.FLICKER);
                 }
             }
 
             if (this.ticks == 195) {
                 if (backroomsLevel instanceof Level0BackroomsLevel level) {
-                    level.setLightState(Level0BackroomsLevel.LightState.OFF);
+                    level.setLightState(BackroomsLevelWithLights.LightState.OFF);
                 }
 
                 for (PlayerEntity player : this.getWorld().getPlayers()) {
@@ -236,7 +237,7 @@ public class SkinWalkerEntity extends HostileEntity implements GeoEntity, GeoAni
 
             if (this.ticks >= 220) {
                 if (backroomsLevel instanceof Level0BackroomsLevel level) {
-                    level.setLightState(Level0BackroomsLevel.LightState.ON);
+                    level.setLightState(BackroomsLevelWithLights.LightState.ON);
                 }
                 this.component.setBeginReveal(false);
                 this.component.setTrueForm(true);

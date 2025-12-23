@@ -5,7 +5,7 @@ import com.sp.init.BackroomsLevels;
 import com.sp.init.ModEntities;
 import com.sp.init.ModSounds;
 import com.sp.world.events.AbstractEvent;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level1BackroomsLevel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -24,8 +24,8 @@ public class Level1Blackout extends AbstractEvent {
             return;
         }
 
-        if(level.getLightState() != Level0BackroomsLevel.LightState.BLACKOUT) {
-            level.setLightState(Level0BackroomsLevel.LightState.BLACKOUT);
+        if(level.getLightState() != BackroomsLevelWithLights.LightState.BLACKOUT) {
+            level.setLightState(BackroomsLevelWithLights.LightState.BLACKOUT);
             playSound(world, ModSounds.LIGHTS_OUT);
         }
     }
@@ -77,7 +77,7 @@ public class Level1Blackout extends AbstractEvent {
             return;
         }
 
-        level.setLightState(Level0BackroomsLevel.LightState.ON);
+        level.setLightState(BackroomsLevelWithLights.LightState.ON);
         playSound(world, ModSounds.LIGHTS_ON);
     }
 

@@ -29,7 +29,7 @@ public class InfiniteGrassBackroomsLevel extends BackroomsLevel {
     public void register() {
         super.register();
 
-        this.registerEvents("ambience", InfiniteGrassAmbience::new);
+        this.registerEvent("ambience", InfiniteGrassAmbience::new);
 
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();

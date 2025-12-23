@@ -3,6 +3,7 @@ package com.sp.world.events.level0;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModSounds;
 import com.sp.world.events.AbstractEvent;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level0BackroomsLevel;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -57,12 +58,12 @@ public class Level0IntercomBasic extends AbstractEvent {
 
         if (friend){
             if (ticks == 460){
-                level.setLightState(Level0BackroomsLevel.LightState.FLICKER);
+                level.setLightState(BackroomsLevelWithLights.LightState.FLICKER);
             } else if (ticks == 528){
-                level.setLightState(Level0BackroomsLevel.LightState.OFF);
+                level.setLightState(BackroomsLevelWithLights.LightState.OFF);
                 playSound(world, ModSounds.LIGHTS_OUT);
             } else if (ticks == 656){
-                level.setLightState(Level0BackroomsLevel.LightState.ON);
+                level.setLightState(BackroomsLevelWithLights.LightState.ON);
             }
         }
     }

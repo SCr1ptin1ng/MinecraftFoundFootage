@@ -9,13 +9,12 @@ import com.sp.cca_stuff.WorldEvents;
 import com.sp.init.BackroomsLevels;
 import com.sp.world.events.AbstractEvent;
 import com.sp.world.events.infinite_grass.InfiniteGrassAmbience;
-import com.sp.world.events.level0.Level0Blackout;
-import com.sp.world.events.level0.Level0Flicker;
+import com.sp.world.events.generic.lights.LightLevelBlackout;
+import com.sp.world.events.generic.lights.LightLevelFlicker;
 import com.sp.world.events.level0.Level0IntercomBasic;
 import com.sp.world.events.level0.Level0Music;
 import com.sp.world.events.level1.Level1Ambience;
 import com.sp.world.events.level1.Level1Blackout;
-import com.sp.world.events.level1.Level1Flicker;
 import com.sp.world.events.level2.Level2Warp;
 import com.sp.world.events.poolrooms.PoolroomsAmbience;
 import com.sp.world.events.poolrooms.PoolroomsSunset;
@@ -87,11 +86,17 @@ public class EventCommand {
         WorldEvents events = InitializeComponents.EVENTS.get(world);
 
         if (registryKey == BackroomsLevels.LEVEL0_WORLD_KEY) {
-            Level0Flicker flicker = new Level0Flicker();
+            LightLevelFlicker flicker = new LightLevelFlicker();
             setEvent(events, world, flicker);
             return 1;
         } else if (registryKey == BackroomsLevels.LEVEL1_WORLD_KEY) {
-            Level1Flicker flicker = new Level1Flicker();
+            LightLevelFlicker flicker = new LightLevelFlicker();
+            setEvent(events, world, flicker);
+
+
+            return 1;
+        } else if (registryKey == BackroomsLevels.LEVEL324_WORLD_KEY) {
+            LightLevelFlicker flicker = new LightLevelFlicker();
             setEvent(events, world, flicker);
 
 
@@ -107,7 +112,7 @@ public class EventCommand {
         WorldEvents events = InitializeComponents.EVENTS.get(world);
 
         if (registryKey == BackroomsLevels.LEVEL0_WORLD_KEY) {
-            Level0Blackout blackout = new Level0Blackout();
+            LightLevelBlackout blackout = new LightLevelBlackout();
             setEvent(events, world, blackout);
 
             return 1;

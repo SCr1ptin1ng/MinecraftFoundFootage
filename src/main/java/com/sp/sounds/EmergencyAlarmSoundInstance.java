@@ -4,6 +4,7 @@ import com.sp.SPBRevampedClient;
 import com.sp.block.entity.EmergencyLightBlockEntity;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModSounds;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level0BackroomsLevel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,7 +50,7 @@ public class EmergencyAlarmSoundInstance extends MovingSoundInstance {
                 if(world != null) {
                     if (!this.entity.isRemoved() &&
                             this.entity.getPos().isWithinDistance(player.getPos(), 80.0f) &&
-                            level.getLightState() != Level0BackroomsLevel.LightState.BLACKOUT &&
+                            level.getLightState() != BackroomsLevelWithLights.LightState.BLACKOUT &&
                             !SPBRevampedClient.blackScreen)
                     {
                         this.pitch = 1.0F;

@@ -4,7 +4,7 @@ import com.sp.block.custom.FluorescentLightBlock;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModBlockEntities;
 import com.sp.init.ModBlocks;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.deferred.light.PointLight;
 import net.minecraft.block.BlockState;
@@ -97,19 +97,19 @@ public class FluorescentLightBlockEntity extends BlockEntity {
                     world.setBlockState(pos, ModBlocks.FLUORESCENT_LIGHT.getDefaultState().with(FluorescentLightBlock.COPY, false));
                 }
 
-                if (!((BackroomsLevels.getLevel(this.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof Level0BackroomsLevel level)) {
+                if (!((BackroomsLevels.getLevel(this.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof BackroomsLevelWithLights level)) {
                     return;
                 }
                 //Turn off if Blackout Event is active
-                if (level.getLightState() == Level0BackroomsLevel.LightState.BLACKOUT) {
+                if (level.getLightState() == BackroomsLevelWithLights.LightState.BLACKOUT) {
                     world.setBlockState(pos, world.getBlockState(pos).with(FluorescentLightBlock.BLACKOUT, true));
                 }
 
-                if (level.getLightState() != Level0BackroomsLevel.LightState.ON && state.get(FluorescentLightBlock.ON)) {
+                if (level.getLightState() != BackroomsLevelWithLights.LightState.ON && state.get(FluorescentLightBlock.ON)) {
                     world.setBlockState(pos, world.getBlockState(pos).with(FluorescentLightBlock.ON, false));
                 }
 
-                if (level.getLightState() == Level0BackroomsLevel.LightState.FLICKER && !state.get(FluorescentLightBlock.BLACKOUT)) {
+                if (level.getLightState() == BackroomsLevelWithLights.LightState.FLICKER && !state.get(FluorescentLightBlock.BLACKOUT)) {
                     if (ticks % randInt == 0) {
                         boolean i = this.random.nextBoolean();
                         if (i) {
@@ -119,7 +119,7 @@ public class FluorescentLightBlockEntity extends BlockEntity {
                         }
                     }
                 } else {
-                    if (!state.get(FluorescentLightBlock.ON) && level.getLightState() == Level0BackroomsLevel.LightState.ON) {
+                    if (!state.get(FluorescentLightBlock.ON) && level.getLightState() == BackroomsLevelWithLights.LightState.ON) {
                         world.setBlockState(pos, world.getBlockState(pos).with(FluorescentLightBlock.ON, true));
                     }
                 }

@@ -38,8 +38,8 @@ public class PoolroomsBackroomsLevel extends BackroomsLevel {
     public void register() {
         super.register();
 
-        this.registerEvents("sunset", PoolroomsSunset::new);
-        this.registerEvents("abience", PoolroomsAmbience::new);
+        this.registerEvent("sunset", PoolroomsSunset::new);
+        this.registerEvent("abience", PoolroomsAmbience::new);
 
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();

@@ -5,12 +5,13 @@ import com.sp.cca_stuff.InitializeComponents;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.init.BackroomsLevels;
 import com.sp.world.events.AbstractEvent;
-import com.sp.world.events.level0.Level0Blackout;
-import com.sp.world.events.level0.Level0Flicker;
+import com.sp.world.events.generic.lights.LightLevelBlackout;
+import com.sp.world.events.generic.lights.LightLevelFlicker;
 import com.sp.world.events.level0.Level0IntercomBasic;
 import com.sp.world.events.level0.Level0Music;
 import com.sp.world.generation.chunk_generator.Level0ChunkGenerator;
 import com.sp.world.levels.BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,7 +22,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Level0BackroomsLevel extends BackroomsLevel {
+public class Level0BackroomsLevel extends BackroomsLevel implements BackroomsLevelWithLights {
     ///execute in spb-revamped:level0 run tp 1063 15 24
 
     private int blackoutCount = 0;
@@ -45,10 +46,10 @@ public class Level0BackroomsLevel extends BackroomsLevel {
     @Override
     public void register() {
         super.register();
-        this.registerEvents("blackout", Level0Blackout::new);
-        this.registerEvents("flicker", Level0Flicker::new);
-        this.registerEvents("intercom", Level0IntercomBasic::new);
-        this.registerEvents("music", Level0Music::new);
+        this.registerEvent("blackout", LightLevelBlackout::new);
+        this.registerEvent("flicker", LightLevelFlicker::new);
+        this.registerEvent("intercom", Level0IntercomBasic::new);
+        this.registerEvent("music", Level0Music::new);
 
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();
@@ -101,10 +102,10 @@ public class Level0BackroomsLevel extends BackroomsLevel {
     public AbstractEvent getRandomEvent(World world) {
         AbstractEvent activeEvent = super.getRandomEvent(world);
 
-        if (activeEvent instanceof Level0Blackout) {
+        if (activeEvent instanceof LightLevelBlackout) {
             this.blackoutCount++;
             if (this.blackoutCount > 2) {
-                while (activeEvent instanceof Level0Blackout) {
+                while (activeEvent instanceof LightLevelBlackout) {
                     activeEvent = super.getRandomEvent(world);
                 }
             }
@@ -162,12 +163,5 @@ public class Level0BackroomsLevel extends BackroomsLevel {
 
     public LightState getLightState() {
         return this.lightState;
-    }
-
-    public enum LightState {
-        ON,
-        OFF,
-        FLICKER,
-        BLACKOUT
     }
 }

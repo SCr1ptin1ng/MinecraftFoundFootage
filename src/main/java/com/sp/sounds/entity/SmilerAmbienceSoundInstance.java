@@ -2,7 +2,7 @@ package com.sp.sounds.entity;
 
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModSounds;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level1BackroomsLevel;
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
@@ -27,7 +27,7 @@ public class SmilerAmbienceSoundInstance extends MovingSoundInstance {
             return;
         }
 
-        if(level.getLightState() != Level0BackroomsLevel.LightState.BLACKOUT || this.player.isRemoved()){
+        if(level.getLightState() != BackroomsLevelWithLights.LightState.BLACKOUT || this.player.isRemoved()){
             this.setDone();
         }
     }

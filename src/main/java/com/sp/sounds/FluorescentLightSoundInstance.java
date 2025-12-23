@@ -6,6 +6,7 @@ import com.sp.block.entity.FluorescentLightBlockEntity;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModBlocks;
 import com.sp.init.ModSounds;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level0BackroomsLevel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -51,7 +52,7 @@ public class FluorescentLightSoundInstance extends MovingSoundInstance {
         if(world != null) {
             if (!this.entity.isRemoved() &&
                 this.entity.getPos().isWithinDistance(player.getPos(), 16.0f) &&
-                level.getLightState() != Level0BackroomsLevel.LightState.BLACKOUT &&
+                level.getLightState() != BackroomsLevelWithLights.LightState.BLACKOUT &&
                 ((FluorescentLightBlockEntity) entity).getCurrentState() == ModBlocks.FLUORESCENT_LIGHT.getDefaultState().with(FluorescentLightBlock.ON, true) &&
                 !((FluorescentLightBlockEntity) entity).getCurrentState().get(FluorescentLightBlock.BLACKOUT) &&
                 !SPBRevampedClient.blackScreen)

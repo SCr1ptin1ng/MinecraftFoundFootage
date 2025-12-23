@@ -26,7 +26,7 @@ import com.sp.sounds.entity.SmilerGlitchSoundInstance;
 import com.sp.sounds.pipes.GasPipeSoundInstance;
 import com.sp.sounds.pipes.WaterPipeSoundInstance;
 import com.sp.world.levels.BackroomsLevel;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level1BackroomsLevel;
 import com.sp.world.levels.custom.Level2BackroomsLevel;
 import com.sp.world.levels.custom.PoolroomsBackroomsLevel;
@@ -313,7 +313,7 @@ public class ClientWrapper {
 
             if ((BackroomsLevels.getLevel(playerComponent.player.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL))
                     instanceof Level1BackroomsLevel level) {
-                if (level.getLightState() == Level0BackroomsLevel.LightState.BLACKOUT && !soundManager.isPlaying(playerComponent.SmilerAmbience)) {
+                if (level.getLightState() == BackroomsLevelWithLights.LightState.BLACKOUT && !soundManager.isPlaying(playerComponent.SmilerAmbience)) {
                     playerComponent.SmilerAmbience = new SmilerAmbienceSoundInstance(playerComponent.player);
                     soundManager.play(playerComponent.SmilerAmbience);
                 }

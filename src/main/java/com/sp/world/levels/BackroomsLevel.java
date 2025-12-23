@@ -171,7 +171,7 @@ public abstract class BackroomsLevel {
 
     /**
      * Called when transitioning out of this level.
-     * This method is called on the same tick the player gets teleported. (Save on the client and server)
+     * This method is called on the same tick the player gets teleported. (Same on the client and server)
      */
     public abstract void transitionOut(CrossDimensionTeleport crossDimensionTeleport);
 
@@ -192,20 +192,13 @@ public abstract class BackroomsLevel {
     }
 
 
-    public void registerEvents(String name, Supplier<AbstractEvent> event) {
+    public void registerEvent(String name, Supplier<AbstractEvent> event) {
         this.events.put(name, event);
     }
 
     public void unregisterEvents(String name) {
         this.events.remove(name);
     }
-
-
-    /**
-     * The Transition Duration is now registered alongside the transition.
-     */
-    @Deprecated
-    public int getTransitionDuration() {return 0;}
 
     /**
      * @param duration How many ticks the transition should take.

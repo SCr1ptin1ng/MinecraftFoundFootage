@@ -135,7 +135,7 @@ public class WalkerEntity extends Entity implements GeoEntity, GeoAnimatable, IK
                     .rotateY(yaw)
                     .rotateX(pitch);
 
-            rotation.nlerp(newRotation, 0.6);
+            rotation.nlerp(newRotation, 0.1);
 
             Vec3d newVelocity = this.getRotationVector().multiply(this.getTarget().distanceTo(this) * SPEED_MULTIPLIER);
 

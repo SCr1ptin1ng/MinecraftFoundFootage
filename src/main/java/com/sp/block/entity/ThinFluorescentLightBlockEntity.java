@@ -5,8 +5,7 @@ import com.sp.block.custom.ThinFluorescentLightBlock;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModBlockEntities;
 import com.sp.init.ModBlocks;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
-import com.sp.world.levels.custom.Level1BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.deferred.light.PointLight;
 import net.minecraft.block.BlockState;
@@ -90,12 +89,8 @@ public class ThinFluorescentLightBlockEntity extends BlockEntity {
                 //Turn off if Blackout Event is active
                 boolean blackouted = false;
 
-                if ((BackroomsLevels.getLevel(world)).orElse(BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL) instanceof Level1BackroomsLevel level) {
-                    blackouted = level.getLightState() == Level0BackroomsLevel.LightState.BLACKOUT;
-                }
-
-                if ((BackroomsLevels.getLevel(world)).orElse(BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL) instanceof Level0BackroomsLevel level) {
-                    if (level.getLightState() == Level0BackroomsLevel.LightState.BLACKOUT) {
+                if ((BackroomsLevels.getLevel(world)).orElse(BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL) instanceof BackroomsLevelWithLights level) {
+                    if (level.getLightState() == BackroomsLevelWithLights.LightState.BLACKOUT) {
                         blackouted = true;
                     }
                 }
@@ -108,7 +103,7 @@ public class ThinFluorescentLightBlockEntity extends BlockEntity {
                     world.setBlockState(pos, world.getBlockState(pos).with(ThinFluorescentLightBlock.BLACKOUT, false));
                 }
 
-                if ((BackroomsLevels.getLevel(world)).orElse(BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL) instanceof Level1BackroomsLevel level && level.getLightState() == Level0BackroomsLevel.LightState.FLICKER && !state.get(ThinFluorescentLightBlock.BLACKOUT)) {
+                if ((BackroomsLevels.getLevel(world)).orElse(BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL) instanceof BackroomsLevelWithLights level && level.getLightState() == BackroomsLevelWithLights.LightState.FLICKER && !state.get(ThinFluorescentLightBlock.BLACKOUT)) {
                     if (ticks % randInt == 0) {
                         int i = random.nextBetween(1, 2);
                         if (i == 1) {

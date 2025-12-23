@@ -5,8 +5,10 @@ import com.sp.SPBRevampedClient;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModBlocks;
+import com.sp.world.events.generic.lights.LightLevelFlicker;
 import com.sp.world.generation.chunk_generator.Level324ChunkGenerator;
 import com.sp.world.levels.BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec2f;
@@ -17,9 +19,13 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Level324Backroomslevel extends BackroomsLevel {
+public class Level324Backroomslevel extends BackroomsLevel implements BackroomsLevelWithLights {
+    private Level0BackroomsLevel.LightState lightState = BackroomsLevelWithLights.LightState.ON;
+
     public Level324Backroomslevel() {
         super("level324", Level324ChunkGenerator.CODEC, new Vec3d(52,65,21), BackroomsLevels.LEVEL324_WORLD_KEY);
+
+        this.registerEvent("flicker", LightLevelFlicker::new);
 
         this.registerTransition((world, playerComponent, from) -> {
             List<LevelTransition> playerList = new ArrayList<>();
@@ -32,6 +38,11 @@ public class Level324Backroomslevel extends BackroomsLevel {
                 playerList.add(getInfiniteFieldsTransition(playerComponent));
             }
 
+            return playerList;
+        }, this.getLevelId() + " -> " + BackroomsLevels.INFINITE_FIELD_BACKROOMS_LEVEL.getLevelId());
+
+        this.registerTransition((world, playerComponent, from) -> {
+            List<LevelTransition> playerList = new ArrayList<>();
 
             Vec2f[] puddleLocations = new Vec2f[]{
                     new Vec2f(300.0f, 0.0f),
@@ -61,7 +72,7 @@ public class Level324Backroomslevel extends BackroomsLevel {
             }
 
             return playerList;
-        }, "level324 -> inf_grass");
+        }, this.getLevelId() + " -> " + BackroomsLevels.POOLROOMS_BACKROOMS_LEVEL.getLevelId());
     }
 
     private static boolean hasGrassBeneath(PlayerComponent playerComponent) {
@@ -165,11 +176,12 @@ public class Level324Backroomslevel extends BackroomsLevel {
 
     @Override
     public void writeToNbt(NbtCompound nbt) {
-
+        nbt.putString("lightState", lightState.name());
     }
 
     @Override
     public void readFromNbt(NbtCompound nbt) {
+        this.lightState = BackroomsLevelWithLights.LightState.valueOf(nbt.getString("lightState"));
 
     }
 
@@ -181,5 +193,14 @@ public class Level324Backroomslevel extends BackroomsLevel {
     @Override
     public void transitionIn(CrossDimensionTeleport crossDimensionTeleport) {
 
+    }
+
+    public void setLightState(Level0BackroomsLevel.LightState lightState) {
+        this.justChanged();
+        this.lightState = lightState;
+    }
+
+    public Level0BackroomsLevel.LightState getLightState() {
+        return this.lightState;
     }
 }

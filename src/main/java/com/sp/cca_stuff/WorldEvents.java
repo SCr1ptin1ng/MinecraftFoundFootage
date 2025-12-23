@@ -8,6 +8,7 @@ import com.sp.init.ModSounds;
 import com.sp.sounds.voicechat.BackroomsVoicechatPlugin;
 import com.sp.world.events.AbstractEvent;
 import com.sp.world.levels.BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level0BackroomsLevel;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
@@ -146,11 +147,11 @@ public class WorldEvents implements AutoSyncedComponent, ServerTickingComponent 
                 tick++;
 
                 if (this.tick == 1) {
-                    level0BackroomsLevel.setLightState(Level0BackroomsLevel.LightState.FLICKER);
+                    level0BackroomsLevel.setLightState(BackroomsLevelWithLights.LightState.FLICKER);
                 }
 
                 if (this.tick == 80) {
-                    level0BackroomsLevel.setLightState(Level0BackroomsLevel.LightState.OFF);
+                    level0BackroomsLevel.setLightState(BackroomsLevelWithLights.LightState.OFF);
 
                     targetComponent.setBeingReleased(true);
                     targetComponent.sync();
@@ -169,7 +170,7 @@ public class WorldEvents implements AutoSyncedComponent, ServerTickingComponent 
                 }
 
                 if (this.tick >= 105) {
-                    level0BackroomsLevel.setLightState(Level0BackroomsLevel.LightState.ON);
+                    level0BackroomsLevel.setLightState(BackroomsLevelWithLights.LightState.ON);
                     targetComponent.setBeingReleased(false);
                     targetComponent.setHasBeenCaptured(false);
                     targetComponent.setShouldBeMuted(false);

@@ -4,7 +4,7 @@ import com.sp.cca_stuff.InitializeComponents;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.cca_stuff.SmilerComponent;
 import com.sp.init.BackroomsLevels;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
+import com.sp.world.levels.BackroomsLevelWithLights;
 import com.sp.world.levels.custom.Level1BackroomsLevel;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.TargetPredicate;
@@ -79,7 +79,7 @@ public class SmilerEntity extends MobEntity {
             }
 
             if (((BackroomsLevels.getLevel(this.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof Level1BackroomsLevel level)) {
-                if (level.getLightState() != Level0BackroomsLevel.LightState.BLACKOUT) {
+                if (level.getLightState() != BackroomsLevelWithLights.LightState.BLACKOUT) {
                     this.discard();
                 }
             }
