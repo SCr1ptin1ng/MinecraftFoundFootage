@@ -54,6 +54,31 @@ public final class InfGrassChunkGenerator extends BackroomsChunkGenerator {
         this.settings = settings;
     }
 
+    public static BlockPos getLevel324GasStationPos(long seed) {
+        java.util.Random seededRandom = new java.util.Random(seed ^ 0x324F1E1DCAFEL);
+        double angle = seededRandom.nextDouble() * Math.PI * 2.0;
+        double radius = 1000.0 + seededRandom.nextDouble() * 96.0 - 48.0;
+
+        int gasStationX = Math.floorDiv((int) Math.round(Math.cos(angle) * radius), 16) * 16;
+        int gasStationZ = Math.floorDiv((int) Math.round(Math.sin(angle) * radius), 16) * 16;
+        return new BlockPos(gasStationX, -34, gasStationZ); //arbitrary y level, couldn figure out how to get it to work dynamically only x and z location are placed dynamically
+    }
+
+    public static String getDebugDirection(long seed, BlockPos fromPos) {
+        BlockPos gasStationPos = getLevel324GasStationPos(seed);
+        int dx = gasStationPos.getX() - fromPos.getX();
+        int dz = gasStationPos.getZ() - fromPos.getZ();
+
+        String horizontal = Math.abs(dx) < 24 ? "" : (dx > 0 ? "E" : "W");
+        String vertical = Math.abs(dz) < 24 ? "" : (dz > 0 ? "S" : "N");
+
+        if (horizontal.isEmpty() && vertical.isEmpty()) {
+            return "HERE";
+        }
+
+        return vertical + horizontal;
+    }
+
     public void generate(StructureWorldAccess world, Chunk chunk) {
         int x = chunk.getPos().getStartX();
         int z = chunk.getPos().getStartZ();
@@ -68,6 +93,18 @@ public final class InfGrassChunkGenerator extends BackroomsChunkGenerator {
         Identifier roomIdentifier;
         StructurePlacementData structurePlacementData = new StructurePlacementData();
         structurePlacementData.setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true);
+
+        BlockPos gasStationPos = getLevel324GasStationPos(world.toServerWorld().getSeed());
+        if (x == gasStationPos.getX() && z == gasStationPos.getZ()) {
+            optional = structureTemplateManager.getTemplate(new Identifier(SPBRevamped.MOD_ID, "level324/gas_station"));
+
+            optional.ifPresent(structureTemplate -> structureTemplate.place(
+                    world,
+                    mutable.set(gasStationPos.getX(), gasStationPos.getY(), gasStationPos.getZ()),
+                    mutable.set(gasStationPos.getX(), gasStationPos.getY(), gasStationPos.getZ()),
+                    structurePlacementData, random, 2));
+            return;
+        }
 
 
         float sampler = SimplexNoise.noise(x, 0);

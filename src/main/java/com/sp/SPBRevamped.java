@@ -3,6 +3,7 @@ package com.sp;
 import com.sp.cca_stuff.InitializeComponents;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.command.EventCommand;
+import com.sp.command.GasStationCommand;
 import com.sp.command.GimmeMyInventoryBack;
 import com.sp.command.LevelCommand;
 import com.sp.command.SkinwalkerCommand;
@@ -15,11 +16,13 @@ import com.sp.init.*;
 import com.sp.item.ModItemGroups;
 import com.sp.mixininterfaces.NewServerProperties;
 import com.sp.networking.InitializePackets;
+import com.sp.world.generation.chunk_generator.InfGrassChunkGenerator;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -33,6 +36,7 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +76,7 @@ public class SPBRevamped implements ModInitializer {
 		ModGamerules.registerGamerules();
 
 		CommandRegistrationCallback.EVENT.register(EventCommand::register);
+		CommandRegistrationCallback.EVENT.register(GasStationCommand::register);
 		CommandRegistrationCallback.EVENT.register(LevelCommand::register);
 		CommandRegistrationCallback.EVENT.register(GimmeMyInventoryBack::register);
 		CommandRegistrationCallback.EVENT.register(SkinwalkerCommand::register);
@@ -127,6 +132,25 @@ public class SPBRevamped implements ModInitializer {
 				LOGGER.error("Error in AFTER_RESPAWN event: {}", String.valueOf(e));
 			}
 		}));
+
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTicks() % 20 != 0) {
+				return;
+			}
+
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				if (player.getWorld().getRegistryKey() != BackroomsLevels.INFINITE_FIELD_WORLD_KEY) {
+					continue;
+				}
+
+				long seed = player.getServerWorld().getSeed();
+				var gasStationPos = InfGrassChunkGenerator.getLevel324GasStationPos(seed);
+				double distance = Math.sqrt(player.getBlockPos().getSquaredDistance(gasStationPos));
+				String direction = InfGrassChunkGenerator.getDebugDirection(seed, player.getBlockPos());
+
+				player.sendMessage(Text.literal("Gas Station [" + direction + "] " + (int) distance + "m"), true);
+			}
+		});
 	}
 
 	public static void sendCameraShakePacket(ServerPlayerEntity player, double speed, double trauma){
