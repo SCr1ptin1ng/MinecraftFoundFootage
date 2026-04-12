@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "spb-revamped:block/gas_station_sign" },
+    "facing=east": { "model": "spb-revamped:block/gas_station_sign", "y": 90 },
+    "facing=south": { "model": "spb-revamped:block/gas_station_sign", "y": 180 },
+    "facing=west": { "model": "spb-revamped:block/gas_station_sign", "y": 270 }
+  }
+}

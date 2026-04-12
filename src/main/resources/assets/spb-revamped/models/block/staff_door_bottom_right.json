@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_right",
+  "textures": {
+    "bottom": "spb-revamped:block/staff_door_down",
+    "top": "spb-revamped:block/staff_door_up"
+  }
+}

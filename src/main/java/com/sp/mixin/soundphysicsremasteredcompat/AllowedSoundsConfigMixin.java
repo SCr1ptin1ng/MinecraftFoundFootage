@@ -41,6 +41,11 @@ public class AllowedSoundsConfigMixin {
         map.put(ModSounds.CREAKING1.getId().toString(), false);
         map.put(ModSounds.CREAKING2.getId().toString(), false);
         map.put(ModSounds.LEVEL2_AMBIENCE.getId().toString(), false);
+        map.put(ModSounds.LEVEL959_ROOM_TONE.getId().toString(), false);
+        map.put(ModSounds.LEVEL959_AMBIENCE.getId().toString(), false);
+        map.put(ModSounds.LEVEL959_AMBIENCE_DRONE.getId().toString(), false);
+        map.put(ModSounds.LEVEL959_METAL_BEND.getId().toString(), false);
+        map.put(ModSounds.LEVEL959_FOOTSTEPS.getId().toString(), false);
         map.put(ModSounds.AMBIENCE.getId().toString(), false);
 
         map.put(ModSounds.SKINWALKER_AMBIENCE.getId().toString(), false);

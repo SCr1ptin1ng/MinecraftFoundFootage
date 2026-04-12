@@ -7,7 +7,6 @@ import com.sp.init.BackroomsLevels;
 import com.sp.init.ModBlocks;
 import com.sp.init.ModSounds;
 import com.sp.world.levels.BackroomsLevelWithLights;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.entity.BlockEntity;
@@ -45,7 +44,7 @@ public class FluorescentLightSoundInstance extends MovingSoundInstance {
     public void tick() {
         World world = this.entity.getWorld();
 
-        if (!((BackroomsLevels.getLevel(player.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof Level0BackroomsLevel level)) {
+        if (!((BackroomsLevels.getLevel(player.getWorld()).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof BackroomsLevelWithLights level)) {
             return;
         }
 

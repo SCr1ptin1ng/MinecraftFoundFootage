@@ -2,10 +2,11 @@ package com.sp.cca_stuff;
 
 import com.sp.SPBRevamped;
 import com.sp.clientWrapper.ClientWrapper;
-import com.sp.entity.custom.SmilerEntity;
 import com.sp.init.*;
 import com.sp.mixininterfaces.ServerPlayNetworkSprint;
 import com.sp.sounds.voicechat.BackroomsVoicechatPlugin;
+import com.sp.world.events.level324.Level324SmilerSequence;
+import com.sp.world.generation.chunk_generator.Level324ChunkGenerator;
 import com.sp.world.levels.BackroomsLevel;
 import com.sp.world.levels.custom.Level2BackroomsLevel;
 import com.sp.world.levels.custom.Level324Backroomslevel;
@@ -32,8 +33,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.TeleportTarget;
@@ -61,6 +62,7 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
     private int scrollingInInventoryTime;
 
     private boolean flashLightOn;
+    private boolean flashlightFixed;
     private boolean shouldRender;
     private boolean isDoingCutscene;
     private boolean playingGlitchSound;
@@ -97,11 +99,22 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
     public MovingSoundInstance SmilerAmbience;
     public MovingSoundInstance WindAmbience;
     public MovingSoundInstance WindTunnelAmbience;
+    public MovingSoundInstance FacelingAmbience;
+    public MovingSoundInstance Level959RoomToneAmbience;
+    public MovingSoundInstance Level959TransientAmbience;
+
+    public int level959AmbienceTimer = -1;
+    public int level959DroneTimer = -1;
+    public int level959MetalTimer = -1;
+    public int level959FootstepTimer = -1;
+    public int level959StingerCooldown = -1;
+    public boolean level959WasActive = false;
 
     private boolean canSeeActiveSkinWalker;
     private boolean prevFlashLightOn;
 
     public float glitchTimer;
+    public float facelingGlitchTimer;
     private boolean shouldGlitch;
     public int glitchTick;
     public boolean shouldInflictGlitchDamage;
@@ -114,6 +127,7 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         this.scrollingInInventoryTime = 0;
         this.player = player;
         this.flashLightOn = false;
+        this.flashlightFixed = false;
         this.shouldRender = true;
         this.shouldNoClip = false;
         this.shouldDoStatic = false;
@@ -140,6 +154,7 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         this.canSeeActiveSkinWalker = false;
 
         this.glitchTimer = 0.0f;
+        this.facelingGlitchTimer = 0.0f;
         this.shouldGlitch = false;
         this.glitchTick = 0;
 
@@ -240,6 +255,14 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         return flashLightOn;
     }
 
+    public boolean isFlashlightFixed() {
+        return flashlightFixed;
+    }
+
+    public void setFlashlightFixed(boolean flashlightFixed) {
+        this.flashlightFixed = flashlightFixed;
+    }
+
     public boolean isDoingCutscene() {
         return isDoingCutscene;
     }
@@ -332,6 +355,10 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         return glitchTimer;
     }
 
+    public float getCombinedGlitchTimer() {
+        return Math.max(this.glitchTimer, this.facelingGlitchTimer);
+    }
+
     public boolean shouldGlitch() {
         return shouldGlitch;
     }
@@ -347,6 +374,7 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
     public void readFromNbt(NbtCompound tag) {
         this.stamina = tag.getInt("stamina");
         this.flashLightOn = tag.getBoolean("flashLightOn");
+        this.flashlightFixed = tag.getBoolean("flashlightFixed");
         this.shouldRender = tag.getBoolean("shouldRender");
         this.isDoingCutscene = tag.getBoolean("isDoingCutscene");
         this.playingGlitchSound = tag.getBoolean("playingGlitchSound");
@@ -369,6 +397,7 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
     public void writeToNbt(NbtCompound tag) {
         tag.putInt("stamina", this.stamina);
         tag.putBoolean("flashLightOn", this.flashLightOn);
+        tag.putBoolean("flashlightFixed", this.flashlightFixed);
         tag.putBoolean("shouldRender", this.shouldRender);
         tag.putBoolean("isDoingCutscene", this.isDoingCutscene);
         tag.putBoolean("playingGlitchSound", this.playingGlitchSound);
@@ -431,6 +460,38 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         if (backroomsLevel.isPresent()) {
             BackroomsLevel level = backroomsLevel.get();
 
+            if (level == BackroomsLevels.LEVEL324_BACKROOMS_LEVEL && !this.player.getWorld().isClient() && this.player.age % 20 == 0) {
+                Level324ChunkGenerator.ensureFacelingPresent((ServerWorld) this.player.getWorld());
+                if (!Level324ChunkGenerator.FACELING_ENABLED) {
+                    Level324ChunkGenerator.removeFacelings((ServerWorld) this.player.getWorld());
+                }
+            }
+
+            if (level instanceof Level324Backroomslevel level324
+                    && !this.player.getWorld().isClient()
+                    && !level324.isBatteryTaken()
+                    && !level324.isBatterySpawned()
+                    && this.player.squaredDistanceTo(Vec3d.ofCenter(Level324ChunkGenerator.FACELING_SPAWN_POS)) <= 16.0) {
+                Level324ChunkGenerator.spawnBatteryNearFaceling((ServerWorld) this.player.getWorld());
+                level324.setBatterySpawned(true);
+            }
+
+            if (level == BackroomsLevels.LEVEL324_BACKROOMS_LEVEL
+                    && Level324Backroomslevel.isInSmilerZone(this.player)
+                    && !this.player.getWorld().isClient()) {
+                WorldEvents events = InitializeComponents.EVENTS.get(this.player.getWorld());
+                if (!(events.getActiveEvent() instanceof Level324SmilerSequence)) {
+                    if (events.getActiveEvent() != null) {
+                        events.getActiveEvent().finish(this.player.getWorld());
+                    }
+
+                    Level324SmilerSequence sequence = new Level324SmilerSequence();
+                    events.setActiveEvent(sequence);
+                    sequence.init(this.player.getWorld());
+                    events.ticks = 0;
+                }
+            }
+
             List<BackroomsLevel.LevelTransition> teleports = level.checkForTransition(this, this.player.getWorld());
 
             if (!teleports.isEmpty() && currentTransition == null) {
@@ -481,10 +542,6 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
             this.setTeleportingTimer(teleportingTimer - 1);
         }
 
-        if (BackroomsLevels.isInBackroomsLevel(player.getWorld(), BackroomsLevels.LEVEL324_BACKROOMS_LEVEL) && player.getPos().subtract(0, 64, 0).lengthSquared() > 10000 && player.getPos().y > 60) {
-            summonSmilers();
-        }
-
         //*Update Entity Visibility
         updateEntityVisibility();
 
@@ -493,23 +550,6 @@ public class PlayerComponent implements AutoSyncedComponent, ClientTickingCompon
         }
         
         shouldSync();
-    }
-
-    private void summonSmilers() {
-        if (this.smilerSpawnDelay < 0) {
-            SmilerEntity smiler = ModEntities.SMILER_ENTITY.create(this.player.getWorld());
-
-            BlockPos.Mutable mutable = new BlockPos.Mutable();
-            float randomAngle = random.nextFloat() * 360.0f;
-            Vec3d spawnPos = new Vec3d(0, 0, 15).rotateY(randomAngle).add(player.getPos());
-            if (!this.player.getWorld().getBlockState(mutable.set(spawnPos.x, spawnPos.y, spawnPos.z)).blocksMovement()) {
-                smiler.refreshPositionAndAngles(Math.floor(spawnPos.x) + 0.5f, spawnPos.y, Math.floor(spawnPos.z) + 0.5f, 0.0f, 0.0f);
-                this.player.getWorld().spawnEntity(smiler);
-                smilerSpawnDelay = 80;
-            }
-        }
-
-        smilerSpawnDelay--;
     }
 
     private void updateStamina() {

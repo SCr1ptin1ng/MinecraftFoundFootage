@@ -25,6 +25,7 @@ public class BackroomsLevels {
     public static final RegistryKey<World> POOLROOMS_WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier(SPBRevamped.MOD_ID, "poolrooms"));
     public static final RegistryKey<World> INFINITE_FIELD_WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier(SPBRevamped.MOD_ID, "infinite_field"));
     public static final RegistryKey<World> LEVEL324_WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier(SPBRevamped.MOD_ID, "level324"));
+    public static final RegistryKey<World> A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier(SPBRevamped.MOD_ID, "a_place_you_dont_want_to_know"));
 
     public static final BackroomsLevel LEVEL0_BACKROOMS_LEVEL = new Level0BackroomsLevel();
     public static final BackroomsLevel LEVEL1_BACKROOMS_LEVEL = new Level1BackroomsLevel();
@@ -33,6 +34,7 @@ public class BackroomsLevels {
     public static final BackroomsLevel INFINITE_FIELD_BACKROOMS_LEVEL = new InfiniteGrassBackroomsLevel();
     public static final BackroomsLevel OVERWORLD_REPRESENTING_BACKROOMS_LEVEL = new OverworldRepresentingBackroomsLevel();
     public static final BackroomsLevel LEVEL324_BACKROOMS_LEVEL = new Level324Backroomslevel();
+    public static final BackroomsLevel A_PLACE_YOU_DONT_WANT_TO_KNOW_BACKROOMS_LEVEL = new APlaceYouDontWantToKnowLevel();
 
     public static List<BackroomsLevel> BACKROOMS_LEVELS = new ArrayList<>();
 
@@ -44,6 +46,7 @@ public class BackroomsLevels {
         BACKROOMS_LEVELS.add(INFINITE_FIELD_BACKROOMS_LEVEL);
         BACKROOMS_LEVELS.add(OVERWORLD_REPRESENTING_BACKROOMS_LEVEL);
         BACKROOMS_LEVELS.add(LEVEL324_BACKROOMS_LEVEL);
+        BACKROOMS_LEVELS.add(A_PLACE_YOU_DONT_WANT_TO_KNOW_BACKROOMS_LEVEL);
 
         for (BackroomsLevel backroomsLevel : BACKROOMS_LEVELS) {
             backroomsLevel.register();
@@ -68,6 +71,10 @@ public class BackroomsLevels {
         return BACKROOMS_LEVELS.stream().anyMatch(level -> level.getWorldKey().equals(world) && !(level instanceof WorldRepresentingBackroomsLevel));
     }
 
+    public static boolean usesLevel0Visuals(RegistryKey<World> world) {
+        return world == LEVEL0_WORLD_KEY || world == A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY;
+    }
+
     public static Vec3d getCurrentLevelsOrigin(RegistryKey<World> world) {
         for (BackroomsLevel backroomsLevel : BACKROOMS_LEVELS) {
             if (backroomsLevel.getWorldKey().equals(world)) {
@@ -83,6 +90,7 @@ public class BackroomsLevels {
             "LEVEL1",         LEVEL1_WORLD_KEY,
             "LEVEL2",         LEVEL2_WORLD_KEY,
             "LEVEL324",       LEVEL324_WORLD_KEY,
+            "A_PLACE_YOU_DONT_WANT_TO_KNOW", A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY,
             "POOLROOMS",      POOLROOMS_WORLD_KEY,
             "INFINITE_FIELD", INFINITE_FIELD_WORLD_KEY
     );

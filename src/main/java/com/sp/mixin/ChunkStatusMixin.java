@@ -29,6 +29,9 @@ public abstract class ChunkStatusMixin {
     private static void runGenerationTask(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider, Function fullChunkConverter, List<Chunk> chunks, Chunk chunk, CallbackInfoReturnable<CompletableFuture> cir) {
 
         if (generator instanceof BackroomsChunkGenerator backroomsChunkGenerator) {
+            if (!backroomsChunkGenerator.shouldGenerateAtStatus(targetStatus)) {
+                return;
+            }
             ChunkRegion chunkRegion = new ChunkRegion(world, chunks, targetStatus, backroomsChunkGenerator.getPlacementRadius());
             backroomsChunkGenerator.generate(chunkRegion, chunk);
         }

@@ -6,8 +6,6 @@ import com.sp.block.entity.TinyFluorescentLightBlockEntity;
 import com.sp.init.BackroomsLevels;
 import com.sp.init.ModSounds;
 import com.sp.world.levels.BackroomsLevelWithLights;
-import com.sp.world.levels.custom.Level0BackroomsLevel;
-import com.sp.world.levels.custom.Level1BackroomsLevel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.entity.BlockEntity;
@@ -48,11 +46,7 @@ public class TinyFluorescentLightSoundInstance extends MovingSoundInstance {
         if(world != null) {
             boolean blackedOut = false;
 
-            if ((BackroomsLevels.getLevel(world).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof Level0BackroomsLevel level) {
-                blackedOut = level.getLightState() == BackroomsLevelWithLights.LightState.BLACKOUT;
-            }
-
-            if ((BackroomsLevels.getLevel(world).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof Level1BackroomsLevel level) {
+            if ((BackroomsLevels.getLevel(world).orElse(BackroomsLevels.OVERWORLD_REPRESENTING_BACKROOMS_LEVEL)) instanceof BackroomsLevelWithLights level) {
                 blackedOut = level.getLightState() == BackroomsLevelWithLights.LightState.BLACKOUT;
             }
 

@@ -1,0 +1,135 @@
+{
+  "multipart": [
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "east", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left" }
+    },
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "east", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 90 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "east", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right" }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "east", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 270 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "east", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left" }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "east", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 90 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "east", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right" }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "east", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 270 }
+    },
+
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "north", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 270 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "north", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left" }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "north", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 270 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "north", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right" }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "north", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 270 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "north", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left" }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "north", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 270 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "north", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right" }
+    },
+
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "south", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 90 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "south", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 180 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "south", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 90 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "south", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 180 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "south", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 90 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "south", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 180 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "south", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 90 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "south", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 180 }
+    },
+
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "west", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 180 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "left", "facing": "west", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_left", "y": 270 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "west", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 180 }
+    },
+    {
+      "when": { "half": "lower", "hinge": "right", "facing": "west", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_bottom_right", "y": 90 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "west", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 180 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "left", "facing": "west", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_left", "y": 270 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "west", "open": "false" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 180 }
+    },
+    {
+      "when": { "half": "upper", "hinge": "right", "facing": "west", "open": "true" },
+      "apply": { "model": "spb-revamped:block/staff_door_top_right", "y": 90 }
+    }
+  ]
+}

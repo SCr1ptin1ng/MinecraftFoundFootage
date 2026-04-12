@@ -144,6 +144,44 @@
       "spb-revamped:level2/level2_warp_creaking_loop"
     ]
   },
+  "level959_room_tone": {
+    "sounds": [
+      {
+        "name": "spb-revamped:level959/room_tone",
+        "stream": true
+      }
+    ]
+  },
+  "level959_ambience": {
+    "sounds": [
+      {
+        "name": "spb-revamped:level959/ambience",
+        "stream": true,
+        "preload": false
+      }
+    ]
+  },
+  "level959_ambience_drone": {
+    "sounds": [
+      {
+        "name": "spb-revamped:level959/ambience_drone",
+        "stream": true
+      }
+    ]
+  },
+  "level959_metal_bend": {
+    "sounds": [
+      {
+        "name": "spb-revamped:level959/metal_bend",
+        "stream": true
+      }
+    ]
+  },
+  "level959_footsteps": {
+    "sounds": [
+      "spb-revamped:level959/footsteps"
+    ]
+  },
   "sunset_transition": {
     "sounds": [
       "spb-revamped:poolrooms/sunset_transition"
@@ -292,6 +330,11 @@
   "smiler_glitch": {
     "sounds": [
       "spb-revamped:smiler/smiler_glitch"
+    ]
+  },
+  "faceling_whisper": {
+    "sounds": [
+      "spb-revamped:faceling/four_voices_whispering"
     ]
   },
   "carpet_run": {

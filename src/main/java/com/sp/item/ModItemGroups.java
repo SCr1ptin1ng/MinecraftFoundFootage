@@ -20,12 +20,15 @@ public class ModItemGroups {
                         entries.add(ModBlocks.CEILINGLIGHT);
                         entries.add(ModBlocks.EMERGENCY_LIGHT);
                         entries.add(ModItems.BACKSHROOM);
+                        entries.add(ModItems.BATTERY);
                         entries.add(ModItems.CANNED_FOOD);
                         entries.add(ModBlocks.WALL_BLOCK);
                         entries.add(ModBlocks.WALL_BLOCK_2);
+                        entries.add(ModBlocks.PLASTER_WALL_1);
                         entries.add(ModBlocks.CEILING_TILE);
                         entries.add(ModBlocks.GHOST_CEILING_TILE);
                         entries.add(ModBlocks.CARPET_BLOCK);
+                        entries.add(ModBlocks.RED_CARPET_BLOCK);
 
                         entries.add(ModBlocks.FLUORESCENT_LIGHT);
                         entries.add(ModBlocks.THIN_FLUORESCENT_LIGHT);
@@ -85,6 +88,9 @@ public class ModItemGroups {
                         entries.add(ModBlocks.POWER_POLE_TOP);
                         entries.add(ModBlocks.POWER_POLE);
                         entries.add(ModBlocks.DIRT);
+                        entries.add(ModBlocks.EXITS_SIGN);
+                        entries.add(ModBlocks.STAFF_DOOR);
+                        entries.add(ModBlocks.DOOR_959);
 
                         entries.add(ModBlocks.ROAD);
                         entries.add(ModBlocks.RED_DIRT);

@@ -1,6 +1,7 @@
 package com.sp.init;
 
 import com.sp.SPBRevamped;
+import com.sp.entity.custom.FacelingEntity;
 import com.sp.entity.custom.SkinWalkerEntity;
 import com.sp.entity.custom.SmilerEntity;
 import com.sp.entity.custom.WalkerEntity;
@@ -13,6 +14,9 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModEntities {
+    public static final EntityType<FacelingEntity> FACELING_ENTITY = Registry.register(Registries.ENTITY_TYPE,
+            new Identifier(SPBRevamped.MOD_ID, "faceling"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, FacelingEntity::new).dimensions(EntityDimensions.fixed(0.6f, 1.8f)).build());
 
     public static final EntityType<SkinWalkerEntity> SKIN_WALKER_ENTITY = Registry.register(Registries.ENTITY_TYPE,
             new Identifier(SPBRevamped.MOD_ID, "skin_walker"),

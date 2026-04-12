@@ -3,6 +3,7 @@ package com.sp.world.generation.chunk_generator;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sp.SPBRevamped;
+import com.sp.block.custom.GasStationSignBlock;
 import com.sp.init.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,6 +16,7 @@ import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ChunkRegion;
@@ -61,7 +63,7 @@ public final class InfGrassChunkGenerator extends BackroomsChunkGenerator {
 
         int gasStationX = Math.floorDiv((int) Math.round(Math.cos(angle) * radius), 16) * 16;
         int gasStationZ = Math.floorDiv((int) Math.round(Math.sin(angle) * radius), 16) * 16;
-        return new BlockPos(gasStationX, -34, gasStationZ); //arbitrary y level, couldn figure out how to get it to work dynamically only x and z location are placed dynamically
+        return new BlockPos(gasStationX, -36, gasStationZ); //arbitrary y level, couldn figure out how to get it to work dynamically only x and z location are placed dynamically
     }
 
     public static String getDebugDirection(long seed, BlockPos fromPos) {
@@ -77,6 +79,43 @@ public final class InfGrassChunkGenerator extends BackroomsChunkGenerator {
         }
 
         return vertical + horizontal;
+    }
+
+    private static BlockPos[] getGasStationHintSignPositions(long seed) {
+        java.util.Random seededRandom = new java.util.Random(seed ^ 0x324F1E1DCAFEL);
+        double angle = seededRandom.nextDouble() * Math.PI * 2.0;
+
+        BlockPos[] positions = new BlockPos[3];
+        int[] radii = new int[]{320, 640, 880};
+
+        for (int i = 0; i < radii.length; i++) {
+            int signX = Math.floorDiv((int) Math.round(Math.cos(angle) * radii[i]), 16) * 16;
+            int signZ = Math.floorDiv((int) Math.round(Math.sin(angle) * radii[i]), 16) * 16;
+            positions[i] = new BlockPos(signX, 31, signZ);
+        }
+
+        return positions;
+    }
+
+    public static BlockPos getNearestGasStationHintSign(long seed, BlockPos fromPos) {
+        BlockPos nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (BlockPos signPos : getGasStationHintSignPositions(seed)) {
+            double distance = fromPos.getSquaredDistance(signPos);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = signPos;
+            }
+        }
+
+        return nearest;
+    }
+
+    private static Direction getDirectionToward(BlockPos from, BlockPos to) {
+        double dx = to.getX() - from.getX();
+        double dz = to.getZ() - from.getZ();
+        return Direction.fromRotation(Math.toDegrees(Math.atan2(-dx, dz)));
     }
 
     public void generate(StructureWorldAccess world, Chunk chunk) {
@@ -104,6 +143,12 @@ public final class InfGrassChunkGenerator extends BackroomsChunkGenerator {
                     mutable.set(gasStationPos.getX(), gasStationPos.getY(), gasStationPos.getZ()),
                     structurePlacementData, random, 2));
             return;
+        }
+
+        for (BlockPos signPos : getGasStationHintSignPositions(world.toServerWorld().getSeed())) {
+            if (x == signPos.getX() && z == signPos.getZ()) {
+                world.setBlockState(signPos, ModBlocks.GAS_STATION_SIGN.getDefaultState().with(GasStationSignBlock.FACING, getDirectionToward(signPos, gasStationPos)), 3);
+            }
         }
 
 

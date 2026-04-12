@@ -52,6 +52,12 @@ public class ModSounds {
     public static final SoundEvent LEVEL2_AMBIENCE = registerSoundEvent("level2_ambience");
     public static final SoundEvent LEVEL2_WARP_CREAKING_LOOP = registerSoundEvent("level2_warp_creaking_loop");
 
+    public static final SoundEvent LEVEL959_ROOM_TONE = registerSoundEvent("level959_room_tone");
+    public static final SoundEvent LEVEL959_AMBIENCE = registerSoundEvent("level959_ambience");
+    public static final SoundEvent LEVEL959_AMBIENCE_DRONE = registerSoundEvent("level959_ambience_drone");
+    public static final SoundEvent LEVEL959_METAL_BEND = registerSoundEvent("level959_metal_bend");
+    public static final SoundEvent LEVEL959_FOOTSTEPS = registerSoundEvent("level959_footsteps");
+
 
     public static final SoundEvent SWIM = registerSoundEvent("swim");
     public static final SoundEvent POOLROOMS_AMBIENCE_NOON = registerSoundEvent("poolrooms_ambience_noon");
@@ -89,6 +95,7 @@ public class ModSounds {
 
     public static final SoundEvent SMILER_AMBIENCE = registerSoundEvent("smiler_laugh");
     public static final SoundEvent SMILER_GLITCH = registerSoundEvent("smiler_glitch");
+    public static final SoundEvent FACELING_WHISPER = registerSoundEvent("faceling_whisper");
 
 
     public static final SoundEvent CARPET_WALK = registerSoundEvent("carpet_walk");

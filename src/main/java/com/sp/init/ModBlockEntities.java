@@ -14,6 +14,7 @@ public class ModBlockEntities {
     public static BlockEntityType<ThinFluorescentLightBlockEntity> THIN_FLUORESCENT_LIGHT_BLOCK_ENTITY;
     public static BlockEntityType<TinyFluorescentLightBlockEntity> TINY_FLUORESCENT_LIGHT_BLOCK_ENTITY;
     public static BlockEntityType<WoodenCrateBlockEntity> WOODEN_CRATE_BLOCK_ENTITY;
+    public static BlockEntityType<ExitSignBlockEntity> EXIT_SIGN_BLOCK_ENTITY;
 
     public static BlockEntityType<CeilingLightBlockEntity> CEILING_LIGHT_BLOCK_ENTITY;
     public static BlockEntityType<EmergencyLightBlockEntity> EMERGENCY_LIGHT_BLOCK_ENTITY;
@@ -55,5 +56,10 @@ public class ModBlockEntities {
                 new Identifier(SPBRevamped.MOD_ID,"tiny_fluorescent_light_block_entity"),
                 FabricBlockEntityTypeBuilder.create(TinyFluorescentLightBlockEntity::new,
                         ModBlocks.TINY_FLUORESCENT_LIGHT).build());
+
+        EXIT_SIGN_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,
+                new Identifier(SPBRevamped.MOD_ID, "exit_sign_block_entity"),
+                FabricBlockEntityTypeBuilder.create(ExitSignBlockEntity::new,
+                        ModBlocks.EXITS_SIGN).build());
     }
 }
