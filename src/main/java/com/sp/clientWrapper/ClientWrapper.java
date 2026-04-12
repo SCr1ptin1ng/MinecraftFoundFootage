@@ -12,6 +12,7 @@ import com.sp.block.entity.TinyFluorescentLightBlockEntity;
 import com.sp.cca_stuff.PlayerComponent;
 import com.sp.compat.modmenu.ConfigStuff;
 import com.sp.entity.client.SkinWalkerCapturedFlavorText;
+import com.sp.entity.custom.FacelingEntity;
 import com.sp.entity.custom.SkinWalkerEntity;
 import com.sp.entity.custom.SmilerEntity;
 import com.sp.entity.ik.parts.sever_limbs.ServerLimb;
@@ -20,6 +21,7 @@ import com.sp.init.HelpfulHintManager;
 import com.sp.init.ModSounds;
 import com.sp.networking.InitializePackets;
 import com.sp.sounds.*;
+import com.sp.sounds.entity.FacelingWhisperSoundInstance;
 import com.sp.sounds.entity.SkinWalkerChaseSoundInstance;
 import com.sp.sounds.entity.SmilerAmbienceSoundInstance;
 import com.sp.sounds.entity.SmilerGlitchSoundInstance;
@@ -47,9 +49,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
@@ -145,6 +149,30 @@ public class ClientWrapper {
                 }
             }
 
+            float targetFacelingGlitch = 0.0f;
+            List<FacelingEntity> facelings = playerComponent.player.getWorld().getEntitiesByClass(FacelingEntity.class, playerComponent.player.getBoundingBox().expand(5.0, 2.0, 5.0), faceling -> true);
+            for (FacelingEntity faceling : facelings) {
+                double distance = playerComponent.player.getPos().distanceTo(faceling.getPos());
+                if (distance < 4.0) {
+                    targetFacelingGlitch = Math.max(targetFacelingGlitch, 1.0f - ((float) distance / 4.0f));
+                }
+            }
+
+            if (targetFacelingGlitch > playerComponent.facelingGlitchTimer) {
+                playerComponent.facelingGlitchTimer = Math.min(playerComponent.facelingGlitchTimer + 0.08f, targetFacelingGlitch);
+            } else {
+                playerComponent.facelingGlitchTimer = Math.max(playerComponent.facelingGlitchTimer - 0.04f, targetFacelingGlitch);
+            }
+
+            if (playerComponent.facelingGlitchTimer > 0.0f) {
+                if (!soundManager.isPlaying(playerComponent.FacelingAmbience)) {
+                    playerComponent.FacelingAmbience = new FacelingWhisperSoundInstance(playerComponent.player);
+                    soundManager.play(playerComponent.FacelingAmbience);
+                }
+            } else if (soundManager.isPlaying(playerComponent.FacelingAmbience)) {
+                soundManager.stop(playerComponent.FacelingAmbience);
+            }
+
             if (SPBRevampedClient.isInLevel(BackroomsLevels.LEVEL324_BACKROOMS_LEVEL) && playerComponent.player.getWorld().getBlockState(playerComponent.player.getBlockPos().offset(Direction.DOWN, 2)).isOf(Blocks.GREEN_WOOL)) {
                 playerComponent.glitchTick = Math.min(playerComponent.glitchTick + 4, 120);
                 playerComponent.glitchTimer = (float) playerComponent.glitchTick / 30;
@@ -221,7 +249,7 @@ public class ClientWrapper {
 
                 if (ModKeyBinds.toggleFlashlight.wasPressed() && !SPBRevampedClient.getCutsceneManager().isPlaying && !SPBRevampedClient.getCutsceneManager().blackScreen.isBlackScreen && !playerComponent.hasBeenCaptured && !playerComponent.isBeingCaptured()) {
                     playerComponent.player.playSound(ModSounds.FLASHLIGHT_CLICK, 0.5f, 1);
-                    if (level.allowsTorch().value()) {
+                    if (level.allowsTorch().value() || playerComponent.isFlashlightFixed()) {
                         playerComponent.setFlashLightOn(!playerComponent.isFlashLightOn());
                         HelpfulHintManager.disableFlashlightHint();
 
@@ -240,7 +268,7 @@ public class ClientWrapper {
                     }
                 }
 
-                if (!level.allowsTorch().value()) {
+                if (!level.allowsTorch().value() && !playerComponent.isFlashlightFixed()) {
                     if (playerComponent.isFlashLightOn()) {
                         SPBRevampedClient.sendComponentSyncPacket(false, "flashlight");
                     }
@@ -340,6 +368,8 @@ public class ClientWrapper {
                 soundManager.play(playerComponent.WindTunnelAmbience);
             }
 
+            tickLevel959Audio(playerComponent, soundManager);
+
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -353,6 +383,66 @@ public class ClientWrapper {
             }
 
         }
+    }
+
+    private static void tickLevel959Audio(PlayerComponent playerComponent, SoundManager soundManager) {
+        if (playerComponent.player.getWorld().getRegistryKey() != BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY) {
+            if (playerComponent.level959WasActive) {
+                Level959SoundDebug.logSummary("leaving-level959");
+                playerComponent.level959WasActive = false;
+            }
+
+            if (soundManager.isPlaying(playerComponent.Level959RoomToneAmbience)) {
+                soundManager.stop(playerComponent.Level959RoomToneAmbience);
+            }
+            if (soundManager.isPlaying(playerComponent.Level959TransientAmbience)) {
+                soundManager.stop(playerComponent.Level959TransientAmbience);
+            }
+
+            playerComponent.level959AmbienceTimer = -1;
+            playerComponent.level959DroneTimer = -1;
+            playerComponent.level959MetalTimer = -1;
+            playerComponent.level959FootstepTimer = -1;
+            playerComponent.level959StingerCooldown = -1;
+            return;
+        }
+
+        if (!playerComponent.level959WasActive) {
+            Level959SoundDebug.reset();
+            playerComponent.level959WasActive = true;
+        }
+
+        if (soundManager.isPlaying(playerComponent.Level959RoomToneAmbience)) {
+            soundManager.stop(playerComponent.Level959RoomToneAmbience);
+        }
+
+        if (!soundManager.isPlaying(playerComponent.Level959TransientAmbience)) {
+            playerComponent.Level959TransientAmbience = new Level959LoopingAmbienceSoundInstance(playerComponent.player);
+            soundManager.play(playerComponent.Level959TransientAmbience);
+            Level959SoundDebug.record("ambience");
+        }
+    }
+
+    private static void playSpatial959Sound(PlayerEntity player, SoundEvent soundEvent, float volume, float pitch, int distance, SoundManager soundManager) {
+        Vec3d pos = getRandomOffsetPosition(player, distance, player.getRandom());
+        soundManager.play(new PositionedSoundInstance(soundEvent, SoundCategory.AMBIENT, volume, pitch, player.getRandom(), pos.x, pos.y, pos.z));
+    }
+
+    private static Vec3d getRandomOffsetPosition(PlayerEntity player, int distance, Random random) {
+        double angle = random.nextDouble() * (Math.PI * 2.0);
+        double radius = distance + random.nextDouble() * 2.5;
+        double x = player.getX() + Math.cos(angle) * radius;
+        double z = player.getZ() + Math.sin(angle) * radius;
+        double y = player.getY() + random.nextDouble() * 2.0 - 1.0;
+        return new Vec3d(x, y, z);
+    }
+
+    private static int randomBetween(Random random, int min, int max) {
+        return min + random.nextInt(max - min + 1);
+    }
+
+    private static float randomPitch(Random random) {
+        return 0.92F + random.nextFloat() * 0.16F;
     }
 
     public static void onRemoveSkinWalkerClientSide(SkinWalkerEntity entity) {
@@ -635,7 +725,7 @@ public class ClientWrapper {
                                     .setBrightness(0.005f);
                         }
 
-                        if (world.getRegistryKey().equals(BackroomsLevels.LEVEL0_WORLD_KEY)) {
+                        if (BackroomsLevels.usesLevel0Visuals(world.getRegistryKey())) {
                             block.pointLight
                                     .setColor(200, 200, 255)
                                     .setBrightness(0.005f);

@@ -12,6 +12,7 @@
     "PlayerEntityMixin",
     "PlaySprintSoundMixin",
     "ServerPropertiesHandlerMixin",
+    "SinglePoolElementMixin",
     "StructureBlockEntityMixin",
     "collision.IsGroundedCheckMixin",
     "collision.PlatformCollisionMixin",

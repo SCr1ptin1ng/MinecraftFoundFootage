@@ -56,6 +56,7 @@ public interface MutableUniformAccessMixin {
         SpriteAtlasTexture texture = MinecraftClient.getInstance().getBakedModelManager().getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         if(texture != null) {
             this.setFloat("atlasAspectRatio", (float) texture.getHeight() / texture.getWidth());
+            this.setVector("atlasSize", texture.getWidth(), texture.getHeight());
         }
 
         if(client.world != null && SPBRevampedClient.camera != null) {

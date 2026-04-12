@@ -108,6 +108,18 @@ void main(){
         color = linear_fog(color, length(viewPos), -10, 90, vec4(vec3(0), 1));
     #endif
 
+    #ifdef A_PLACE_YOU_DONT_WANT_TO_KNOW
+        // Subtle stale-office haze for Level 959 only.
+        float level959Depth = length(viewPos);
+        vec4 level959FogColor = vec4(0.20, 0.19, 0.17, 1.0);
+
+        color = linear_fog(color, level959Depth, 8.0, 48.0, level959FogColor);
+
+        float level959Dust = texture(NoiseTex, texCoord * 2.0 + vec2(GameTime * 0.0007, GameTime * 0.0004)).r;
+        float level959DustAmount = smoothstep(14.0, 58.0, level959Depth) * 0.09;
+        color.rgb = mix(color.rgb, level959FogColor.rgb + level959Dust * 0.10, level959DustAmount);
+    #endif
+
     if (isLightning == 1) {
         color = texture(DiffuseSampler0, texCoord);
     }

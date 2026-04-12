@@ -1,6 +1,7 @@
 package com.sp;
 
 import com.sp.block.client.renderer.FluorescentLightBlockEntityRenderer;
+import com.sp.block.client.renderer.ExitSignBlockEntityRenderer;
 import com.sp.block.client.renderer.ThinFluorescentLightBlockEntityRenderer;
 import com.sp.block.client.renderer.TinyFluorescentLightBlockEntityRenderer;
 import com.sp.cca_stuff.InitializeComponents;
@@ -8,7 +9,9 @@ import com.sp.cca_stuff.PlayerComponent;
 import com.sp.cca_stuff.WorldEvents;
 import com.sp.compat.modmenu.ConfigDefinitions;
 import com.sp.compat.modmenu.ConfigStuff;
+import com.sp.command.ShaderCommand;
 import com.sp.entity.client.model.SmilerModel;
+import com.sp.entity.client.renderer.FacelingRenderer;
 import com.sp.entity.client.renderer.SkinWalkerRenderer;
 import com.sp.entity.client.renderer.SmilerRenderer;
 import com.sp.entity.client.renderer.WalkerRenderer;
@@ -23,6 +26,7 @@ import com.sp.render.camera.CameraShake;
 import com.sp.render.camera.CutsceneManager;
 import com.sp.render.grass.GrassRenderer;
 import com.sp.render.gui.StaminaBar;
+import com.sp.render.gui.Level959JigsawDebugHud;
 import com.sp.render.gui.TitleText;
 import com.sp.render.pbr.BlockIdMap;
 import com.sp.render.pbr.PbrRegistry;
@@ -58,6 +62,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
@@ -73,6 +78,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import org.lwjgl.glfw.GLFW;
 import org.joml.*;
 
 import java.util.ArrayList;
@@ -116,8 +122,10 @@ public class SPBRevampedClient implements ClientModInitializer {
     public void onInitializeClient() {
         HudRenderCallback.EVENT.register(new TitleText());
         HudRenderCallback.EVENT.register(new StaminaBar());
+        HudRenderCallback.EVENT.register(new Level959JigsawDebugHud());
 
         InitializePackets.registerS2CPackets();
+        ShaderCommand.register();
 
         ModKeyBinds.initializeKeyBinds();
 
@@ -146,16 +154,22 @@ public class SPBRevampedClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RUG_1, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RUG_2, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_METAL_CASING, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.EXITS_SIGN, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.STAFF_DOOR, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DOOR_959, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WINDOW, RenderLayer.getTranslucent());
 
         BlockEntityRendererFactories.register(ModBlockEntities.FLUORESCENT_LIGHT_BLOCK_ENTITY, FluorescentLightBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlockEntities.THIN_FLUORESCENT_LIGHT_BLOCK_ENTITY, ThinFluorescentLightBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlockEntities.TINY_FLUORESCENT_LIGHT_BLOCK_ENTITY, TinyFluorescentLightBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.EXIT_SIGN_BLOCK_ENTITY, ExitSignBlockEntityRenderer::new);
 
+        EntityRendererRegistry.register(ModEntities.FACELING_ENTITY, FacelingRenderer::new);
         EntityRendererRegistry.register(ModEntities.SKIN_WALKER_ENTITY, SkinWalkerRenderer::new);
         EntityRendererRegistry.register(ModEntities.WALKER_ENTITY, WalkerRenderer::new);
         EntityRendererRegistry.register(ModEntities.SMILER_ENTITY, SmilerRenderer::new);
 
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.FACELING, FacelingRenderer::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.SMILER, SmilerModel::getTexturedModelData);
 
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
@@ -180,6 +194,7 @@ public class SPBRevampedClient implements ClientModInitializer {
                 });
 
                 PbrRegistry.registerPBR(ModBlocks.CARPET_BLOCK,      new PbrRegistry.PbrMaterial(false, 0.0f,1.25f, 1024));
+                PbrRegistry.registerPBR(ModBlocks.RED_CARPET_BLOCK,  new PbrRegistry.PbrMaterial(false, 0.0f,1.25f, 1024));
                 PbrRegistry.registerPBR(ModBlocks.CEILING_TILE,      new PbrRegistry.PbrMaterial(false, 0.0f,1.0f,  512));
                 PbrRegistry.registerPBR(ModBlocks.GHOST_CEILING_TILE,new PbrRegistry.PbrMaterial(false, 0.0f,1.0f,  512));
 
@@ -221,7 +236,7 @@ public class SPBRevampedClient implements ClientModInitializer {
                 }
 
                 if(!cutsceneManager.fall) {
-                    if (clientWorld.getRegistryKey() == BackroomsLevels.LEVEL0_WORLD_KEY) {
+                    if (BackroomsLevels.usesLevel0Visuals(clientWorld.getRegistryKey())) {
                         if (stage == Stage.AFTER_SKY) {
                             if (camera != null) {
                                 ShadowMapRenderer.renderLevel0ShadowMap(camera, clientWorld);
@@ -416,7 +431,7 @@ public class SPBRevampedClient implements ClientModInitializer {
 
                     shaderProgram = context.getShader(GLITCH_SHADER);
                     if (shaderProgram != null) {
-                        shaderProgram.setFloat("glitchTime", playerComponent.getGlitchTimer());
+                        shaderProgram.setFloat("glitchTime", playerComponent.getCombinedGlitchTimer());
                     }
 
                 }
@@ -526,6 +541,20 @@ public class SPBRevampedClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) ->{
+            if (client.currentScreen == null && ModKeyBinds.toggleShaders != null) {
+                while (ModKeyBinds.toggleShaders.wasPressed()) {
+                    long handle = client.getWindow().getHandle();
+                    boolean ctrlHeld = org.lwjgl.glfw.GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS
+                            || org.lwjgl.glfw.GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
+                    if (ctrlHeld) {
+                        boolean enabled = toggleShadersEnabled();
+                        if (client.player != null) {
+                            client.player.sendMessage(Text.literal(enabled ? "Shaders enabled" : "Shaders disabled"), true);
+                        }
+                    }
+                }
+            }
+
             if(cutsceneManager.isPlaying) {
                 if(!ClientManager.getPlayerStateManager().isMuted()) {
                     shouldBeUnmuted = true;
@@ -624,6 +653,17 @@ public class SPBRevampedClient implements ClientModInitializer {
 
     public static boolean shouldRenderCameraEffect() {
         return (!isInBackrooms() && ConfigStuff.enableVhsEffect) || (isInBackrooms() && ConfigStuff.enableVhsEffectInTheBackrooms);
+    }
+
+    public static void setShadersEnabled(boolean enabled) {
+        ConfigStuff.enableVhsEffect = enabled;
+        ConfigStuff.enableVhsEffectInTheBackrooms = enabled;
+    }
+
+    public static boolean toggleShadersEnabled() {
+        boolean enabled = !(ConfigStuff.enableVhsEffect && ConfigStuff.enableVhsEffectInTheBackrooms);
+        setShadersEnabled(enabled);
+        return enabled;
     }
 
     public static void setInBackrooms(boolean inBackrooms) {

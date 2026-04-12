@@ -1,0 +1,47 @@
+{
+  "credit": "Codex",
+  "texture_size": [16, 16],
+  "textures": {
+    "post": "spb-revamped:block/power_pole_texture",
+    "board": "minecraft:block/oak_planks",
+    "particle": "spb-revamped:block/power_pole_texture"
+  },
+  "elements": [
+    {
+      "from": [6, 0, 6],
+      "to": [10, 16, 10],
+      "faces": {
+        "north": { "uv": [0, 0, 4, 16], "texture": "#post" },
+        "east": { "uv": [0, 0, 4, 16], "texture": "#post" },
+        "south": { "uv": [0, 0, 4, 16], "texture": "#post" },
+        "west": { "uv": [0, 0, 4, 16], "texture": "#post" },
+        "up": { "uv": [0, 0, 4, 4], "texture": "#post" },
+        "down": { "uv": [0, 0, 4, 4], "texture": "#post" }
+      }
+    },
+    {
+      "from": [2, 9, 1],
+      "to": [14, 15, 3],
+      "faces": {
+        "north": { "uv": [0, 0, 12, 6], "texture": "#board" },
+        "east": { "uv": [0, 0, 2, 6], "texture": "#board" },
+        "south": { "uv": [0, 0, 12, 6], "texture": "#board" },
+        "west": { "uv": [0, 0, 2, 6], "texture": "#board" },
+        "up": { "uv": [0, 0, 12, 2], "texture": "#board" },
+        "down": { "uv": [0, 0, 12, 2], "texture": "#board" }
+      }
+    },
+    {
+      "from": [12, 10, 0],
+      "to": [16, 14, 4],
+      "faces": {
+        "north": { "uv": [0, 0, 4, 4], "texture": "#board" },
+        "east": { "uv": [0, 0, 4, 4], "texture": "#board" },
+        "south": { "uv": [0, 0, 4, 4], "texture": "#board" },
+        "west": { "uv": [0, 0, 4, 4], "texture": "#board" },
+        "up": { "uv": [0, 0, 4, 4], "texture": "#board" },
+        "down": { "uv": [0, 0, 4, 4], "texture": "#board" }
+      }
+    }
+  ]
+}

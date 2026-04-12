@@ -8,21 +8,24 @@ import com.sp.command.GimmeMyInventoryBack;
 import com.sp.command.LevelCommand;
 import com.sp.command.SkinwalkerCommand;
 import com.sp.compat.modmenu.ConfigStuff;
+import com.sp.entity.custom.FacelingEntity;
 import com.sp.entity.custom.SkinWalkerEntity;
 import com.sp.entity.custom.SmilerEntity;
 import com.sp.entity.ik.model.GeckoLib.MowzieModelFactory;
 import com.sp.entity.ik.util.PrAnCommonClass;
 import com.sp.init.*;
+import com.sp.world.generation.Level959PlacementDebug;
+import com.sp.world.generation.chunk_generator.Level959ChunkGenerator;
+import com.sp.world.levels.custom.APlaceYouDontWantToKnowLevel;
 import com.sp.item.ModItemGroups;
 import com.sp.mixininterfaces.NewServerProperties;
 import com.sp.networking.InitializePackets;
-import com.sp.world.generation.chunk_generator.InfGrassChunkGenerator;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -36,7 +39,7 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +90,7 @@ public class SPBRevamped implements ModInitializer {
 
 		PrAnCommonClass.init();
 
+		FabricDefaultAttributeRegistry.register(ModEntities.FACELING_ENTITY, FacelingEntity.createFacelingAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SKIN_WALKER_ENTITY, SkinWalkerEntity.createSkinWalkerAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.SMILER_ENTITY, SmilerEntity.createSmilerAttributes());
 
@@ -133,24 +137,51 @@ public class SPBRevamped implements ModInitializer {
 			}
 		}));
 
-		ServerTickEvents.END_SERVER_TICK.register(server -> {
-			if (server.getTicks() % 20 != 0) {
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			if (world.getRegistryKey() != World.OVERWORLD) {
 				return;
 			}
 
-			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-				if (player.getWorld().getRegistryKey() != BackroomsLevels.INFINITE_FIELD_WORLD_KEY) {
-					continue;
+			World linkedWorld = server.getWorld(BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY);
+			if (linkedWorld == null) {
+				return;
+			}
+
+			BlockPos spawnPos = BlockPos.ofFloored(BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_BACKROOMS_LEVEL.getSpawnPos());
+			int spawnChunkX = spawnPos.getX() >> 4;
+			int spawnChunkZ = spawnPos.getZ() >> 4;
+
+			for (int chunkX = spawnChunkX - 1; chunkX <= spawnChunkX + 1; chunkX++) {
+				for (int chunkZ = spawnChunkZ - 1; chunkZ <= spawnChunkZ + 1; chunkZ++) {
+					linkedWorld.getChunk(chunkX, chunkZ);
 				}
-
-				long seed = player.getServerWorld().getSeed();
-				var gasStationPos = InfGrassChunkGenerator.getLevel324GasStationPos(seed);
-				double distance = Math.sqrt(player.getBlockPos().getSquaredDistance(gasStationPos));
-				String direction = InfGrassChunkGenerator.getDebugDirection(seed, player.getBlockPos());
-
-				player.sendMessage(Text.literal("Gas Station [" + direction + "] " + (int) distance + "m"), true);
 			}
 		});
+
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			if (world.getRegistryKey() != BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY) {
+				return;
+			}
+
+			if (!(BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_BACKROOMS_LEVEL instanceof APlaceYouDontWantToKnowLevel level959)) {
+				return;
+			}
+
+			Level959PlacementDebug.reset();
+
+			if (level959.isLayoutGenerated()) {
+				Level959PlacementDebug.logSummary("already-generated");
+				return;
+			}
+
+			net.minecraft.server.world.ServerWorld serverWorld = (net.minecraft.server.world.ServerWorld) world;
+			boolean generated = Level959ChunkGenerator.bootstrap(serverWorld);
+			if (generated) {
+				level959.setLayoutGenerated(true);
+			}
+			Level959PlacementDebug.logSummary("post-bootstrap");
+		});
+
 	}
 
 	public static void sendCameraShakePacket(ServerPlayerEntity player, double speed, double trauma){

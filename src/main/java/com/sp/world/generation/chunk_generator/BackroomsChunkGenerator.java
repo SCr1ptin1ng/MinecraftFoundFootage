@@ -13,6 +13,7 @@ import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.Blender;
@@ -37,6 +38,10 @@ public abstract class BackroomsChunkGenerator extends ChunkGenerator {
     }
 
     public abstract void generate(StructureWorldAccess world, Chunk chunk);
+
+    public boolean shouldGenerateAtStatus(ChunkStatus status) {
+        return true;
+    }
 
     protected int getExitSpawnRadius(StructureWorldAccess world){
         if(world.getServer().isDedicated()) {

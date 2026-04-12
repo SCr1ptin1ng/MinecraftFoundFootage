@@ -28,6 +28,6 @@ public class SmilerGlitchSoundInstance extends MovingSoundInstance {
             this.setDone();
         }
 
-        this.volume = this.component.getGlitchTimer() + 0.1f;
+        this.volume = this.component.getCombinedGlitchTimer() + 0.1f;
     }
 }

@@ -7,11 +7,14 @@ import com.sp.block.custom.pipes.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSetType;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.GlassBlock;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.TallBlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -28,8 +31,14 @@ public class ModBlocks {
     public static final Block WALL_BLOCK_2 = registerBlock("wall_block_2",
             new WallBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(-1f).solid().noBlockBreakParticles().sounds(SprintBlockSoundGroup.WALL)));
 
+    public static final Block PLASTER_WALL_1 = registerBlock("plaster_wall_1",
+            new WallBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(-1f).solid().noBlockBreakParticles().sounds(SprintBlockSoundGroup.WALL)));
+
 
     public static final Block CARPET_BLOCK = registerBlock("carpet_block",
+            new CarpetBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL).hardness(-1f).solid().noBlockBreakParticles().sounds(SprintBlockSoundGroup.CARPET)));
+
+    public static final Block RED_CARPET_BLOCK = registerBlock("red_carpet_block",
             new CarpetBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL).hardness(-1f).solid().noBlockBreakParticles().sounds(SprintBlockSoundGroup.CARPET)));
 
     public static final Block CEILING_TILE = registerBlock("ceiling_tile",
@@ -215,6 +224,18 @@ public class ModBlocks {
     public static final Block DIRT = registerBlock("dirt",
             new Block(FabricBlockSettings.copyOf(Blocks.GRASS_BLOCK).hardness(-1f).noBlockBreakParticles().sounds(SprintBlockSoundGroup.GRASS2)));
 
+    public static final Block GAS_STATION_SIGN = registerBlock("gas_station_sign",
+            new GasStationSignBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(-1f).noBlockBreakParticles().nonOpaque().sounds(SprintBlockSoundGroup.WOOD)));
+
+    public static final Block EXITS_SIGN = registerBlock("exits_sign",
+            new ExitSignBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).hardness(-1f).noBlockBreakParticles().nonOpaque().sounds(SprintBlockSoundGroup.METAL)));
+
+    public static final Block STAFF_DOOR = registerDoorBlock("staff_door",
+            new StaffDoorBlock(FabricBlockSettings.copyOf(Blocks.IRON_DOOR).hardness(-1f).noBlockBreakParticles().nonOpaque().sounds(SprintBlockSoundGroup.METAL), BlockSetType.OAK));
+
+    public static final Block DOOR_959 = registerDoorBlock("door_959",
+            new DoorBlock(FabricBlockSettings.copyOf(Blocks.IRON_DOOR).hardness(-1f).noBlockBreakParticles().nonOpaque().sounds(SprintBlockSoundGroup.METAL), BlockSetType.OAK));
+
 
     ///////Level 324 Stuff//////
     public static final Block ROAD = registerBlock("road",
@@ -264,9 +285,20 @@ public class ModBlocks {
         registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK, new Identifier(SPBRevamped.MOD_ID, name), block);
     }
+
+    private static Block registerDoorBlock(String name, Block block) {
+        registerDoorBlockItem(name, block);
+        return Registry.register(Registries.BLOCK, new Identifier(SPBRevamped.MOD_ID, name), block);
+    }
+
     private static Item registerBlockItem(String name, Block block) {
         return Registry.register(Registries.ITEM, new Identifier(SPBRevamped.MOD_ID, name),
                 new BlockItem(block, new FabricItemSettings()));
+    }
+
+    private static Item registerDoorBlockItem(String name, Block block) {
+        return Registry.register(Registries.ITEM, new Identifier(SPBRevamped.MOD_ID, name),
+                new TallBlockItem(block, new FabricItemSettings()));
     }
 
     public static void init() {
