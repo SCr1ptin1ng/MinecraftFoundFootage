@@ -3,6 +3,7 @@ package com.sp.init;
 import com.sp.SPBRevamped;
 import com.sp.entity.custom.FacelingEntity;
 import com.sp.entity.custom.SkinWalkerEntity;
+import com.sp.entity.custom.SpyderControllerEntity;
 import com.sp.entity.custom.SmilerEntity;
 import com.sp.entity.custom.WalkerEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -29,4 +30,12 @@ public class ModEntities {
     public static final EntityType<WalkerEntity> WALKER_ENTITY = Registry.register(Registries.ENTITY_TYPE,
             new Identifier(SPBRevamped.MOD_ID, "walker"),
             FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, WalkerEntity::new).dimensions(EntityDimensions.fixed(2.0f, 2.0f)).build());
+
+    public static final EntityType<SpyderControllerEntity> SPYDER_CONTROLLER_ENTITY = Registry.register(Registries.ENTITY_TYPE,
+            new Identifier(SPBRevamped.MOD_ID, "spyder_controller"),
+            FabricEntityTypeBuilder.<SpyderControllerEntity>create(SpawnGroup.MISC, SpyderControllerEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.6f, 0.3f))
+                    .trackRangeBlocks(64)
+                    .trackedUpdateRate(1)
+                    .build());
 }

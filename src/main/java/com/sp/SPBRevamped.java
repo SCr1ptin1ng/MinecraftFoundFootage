@@ -15,6 +15,7 @@ import com.sp.entity.ik.model.GeckoLib.MowzieModelFactory;
 import com.sp.entity.ik.util.PrAnCommonClass;
 import com.sp.init.*;
 import com.sp.world.generation.Level959PlacementDebug;
+import com.sp.world.generation.Level959SpyderDirector;
 import com.sp.world.generation.chunk_generator.Level959ChunkGenerator;
 import com.sp.world.levels.custom.APlaceYouDontWantToKnowLevel;
 import com.sp.item.ModItemGroups;
@@ -26,6 +27,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -180,6 +182,12 @@ public class SPBRevamped implements ModInitializer {
 				level959.setLayoutGenerated(true);
 			}
 			Level959PlacementDebug.logSummary("post-bootstrap");
+		});
+
+		ServerTickEvents.END_WORLD_TICK.register(world -> {
+			if (world.getRegistryKey() == BackroomsLevels.A_PLACE_YOU_DONT_WANT_TO_KNOW_WORLD_KEY) {
+				Level959SpyderDirector.tick(world);
+			}
 		});
 
 	}

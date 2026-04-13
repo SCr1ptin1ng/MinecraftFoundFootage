@@ -13,6 +13,7 @@ import com.sp.command.ShaderCommand;
 import com.sp.entity.client.model.SmilerModel;
 import com.sp.entity.client.renderer.FacelingRenderer;
 import com.sp.entity.client.renderer.SkinWalkerRenderer;
+import com.sp.entity.client.renderer.SpyderControllerRenderer;
 import com.sp.entity.client.renderer.SmilerRenderer;
 import com.sp.entity.client.renderer.WalkerRenderer;
 import com.sp.init.*;
@@ -168,6 +169,7 @@ public class SPBRevampedClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.SKIN_WALKER_ENTITY, SkinWalkerRenderer::new);
         EntityRendererRegistry.register(ModEntities.WALKER_ENTITY, WalkerRenderer::new);
         EntityRendererRegistry.register(ModEntities.SMILER_ENTITY, SmilerRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SPYDER_CONTROLLER_ENTITY, SpyderControllerRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.FACELING, FacelingRenderer::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.SMILER, SmilerModel::getTexturedModelData);

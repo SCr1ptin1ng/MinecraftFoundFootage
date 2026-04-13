@@ -22,6 +22,7 @@ public class ModItemGroups {
                         entries.add(ModItems.BACKSHROOM);
                         entries.add(ModItems.BATTERY);
                         entries.add(ModItems.CANNED_FOOD);
+                        entries.add(ModItems.SPYDER_DEBUG);
                         entries.add(ModBlocks.WALL_BLOCK);
                         entries.add(ModBlocks.WALL_BLOCK_2);
                         entries.add(ModBlocks.PLASTER_WALL_1);
