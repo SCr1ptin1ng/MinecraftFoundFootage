@@ -355,7 +355,7 @@ It now has:
 - grouped stepping
 - serial chain solving
 
-That is a strong base.
+
 
 The current blocker is now much more specific:
 
