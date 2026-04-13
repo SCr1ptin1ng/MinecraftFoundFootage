@@ -3,6 +3,8 @@
 * lvl 324 entities accurrate with the wiki 
 * custom spider entity procedurally animated
 * sort of siren head or scp 094 stle humanoid figures 
+* spyder debug wand to visualize path, facing, and toggle legs on/off
+* EXTREMELY IMPORTANT: spyder body is still laying too flat on its belly, which is breaking leg bend direction, clipping, and the overall locomotion read
 
 
 ## Personal Notes

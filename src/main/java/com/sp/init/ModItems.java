@@ -21,6 +21,9 @@ public class ModItems {
     public static final Item BATTERY = registerItem("battery",
             new BatteryItem(new FabricItemSettings().maxCount(16)));
 
+    public static final Item SPYDER_DEBUG = registerItem("spyder_debug",
+            new Item(new FabricItemSettings().maxCount(1)));
+
     private static Item registerItem(String name, Item item){
         return Registry.register(Registries.ITEM, new Identifier(SPBRevamped.MOD_ID, name), item);
     }
