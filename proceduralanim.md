@@ -153,6 +153,41 @@ The current version uses a serial chain solve that tries to bend:
 
 This is closer to a robotic arm / finger chain than to a decorative wobble.
 
+## Current Failure Pattern
+
+After the latest passes, the prototype is no longer completely broken, but the remaining issues are structural rather than cosmetic.
+
+### What the Recent Logs Are Telling Us
+
+From the current `run/logs/latest.log` spider debug output:
+
+- most legs stay planted while only one leg steps at a time
+- `targetDelta` often grows very large in the forward/back axis before a leg is allowed to move
+- `tipGround` stays at a small fixed offset, which means contact is being faked more than truly supported
+- the body clearance is staying in a narrow band instead of reacting strongly to changing support geometry
+
+That matches what we are seeing in-game:
+
+- speed is too low
+- legs still intersect each other
+- feet do not convincingly carry the body
+- the body still feels controller-led instead of leg-led
+
+### Root Cause
+
+The current system is still fundamentally:
+
+- body/controller first
+- leg reaction second
+
+Cymaera's spider is fundamentally:
+
+- leg support first
+- body solved from support second
+- gait permissions and stepping rules baked into the body/leg runtime
+
+That difference matters more now than any individual tweak.
+
 ## What Is Still Broken
 
 ### 1. Extremely Important: Body Is Too Belly-Down
@@ -204,6 +239,182 @@ The main reason is that the feet are independent, but the body does not yet feel
 
 The motion still looks partly like animated appendages instead of fully weight-bearing limbs.
 
+## Restart Strategy
+
+This is the new plan going forward.
+
+We should not throw away the whole spider feature, but we should stop trying to salvage the current controller as the long-term architecture.
+
+The right move is:
+
+- keep our entity entrypoint
+- keep our renderer and custom visual model direction
+- keep our debug stick and debug overlays
+- rebuild the locomotion runtime around Cymaera's body/leg/gait architecture
+
+In other words:
+
+- use Cymaera's movement workflow
+- use our rendering and game integration
+
+## New Target Architecture
+
+### Keep From Our Project
+
+- `SpyderControllerEntity` as the Minecraft entity and debug interaction owner
+- `SpyderControllerRenderer` as the visual output layer
+- debug stick modes and target selection
+- our custom body proportions and black "void block" look
+- future `level959` spawning / director logic
+
+### Replace or Rebuild
+
+- current stepping scheduler
+- current body follow controller
+- current planted-foot ownership model
+- current support-to-body relationship
+- current mixed controller/IK responsibilities
+
+### Borrow Directly From Cymaera
+
+- `SpiderBody` style central locomotion runtime
+- `Leg` style memo/update/target/step ownership
+- `Gait` profile values
+- `GaitType` stepping permissions and update order
+- target grounding / stranded target logic
+- body preferred height from support and look-ahead
+- leg cooldown logic based on pair relationships
+
+## Planned Refactor Phases
+
+### Phase 1. Freeze the Renderer Contract
+
+Goal:
+
+- keep the renderer dumb
+- renderer only consumes solved joints, body orientation, and debug markers
+
+Rules:
+
+- no gait logic in the renderer
+- no target selection in the renderer
+- no body support solving in the renderer
+
+### Phase 2. Introduce a New Body Runtime
+
+Create a new internal runtime layer, likely as nested types or new files:
+
+- `SpyderBodyRuntime`
+- `SpyderLegRuntime`
+- `SpyderGaitProfile`
+- `SpyderGaitType`
+
+This runtime should own:
+
+- position
+- velocity
+- orientation
+- preferred orientation
+- support polygon / support normal
+- grounded state
+- gait selection
+- leg update order
+
+This is the part that should become "Cymaera-style".
+
+### Phase 3. Make Legs Primary
+
+Each leg should own:
+
+- memo positions
+- trigger zone
+- comfort zone
+- grounded target
+- stranded target
+- current end effector
+- step state
+- cooldown timers
+
+The leg decides whether it wants to move.
+
+The gait decides whether it is allowed to move.
+
+The body should no longer drag the feet around as the primary source of motion.
+
+### Phase 4. Rebuild Body Height and Suspension
+
+The body height must be computed from:
+
+- grounded leg targets
+- actual grounded leg effectors
+- support normal / support polygon
+- velocity / look-ahead
+
+The body should feel suspended between planted legs, not simply offset upward by a fixed amount.
+
+### Phase 5. Port Cymaera Gait Logic
+
+We should use Cymaera's ideas almost directly here:
+
+- diagonal update ordering
+- cross-pair grounding checks
+- same-pair / cross-pair cooldowns
+- uncomfortable / outside-trigger stepping
+- special handling when a target is no longer grounded
+
+This will help fix:
+
+- very slow stepping
+- only one useful leg moving
+- tangled legs waiting too long
+
+### Phase 6. Re-solve the Leg Chain
+
+Only after Phases 2 through 5 are in place should we revisit the leg chain solver again.
+
+At that point, if needed, we can swap the planar solve for:
+
+- a cleaner constrained analytic chain
+- or a proper FABRIK pass with bend constraints
+
+But solver work should come after locomotion ownership is fixed, not before.
+
+## Immediate Next Implementation Pass
+
+The next code pass should do only these things:
+
+1. Create a new Cymaera-style runtime inside our project without deleting the current renderer.
+2. Move step permission logic out of ad-hoc controller code and into gait/leg runtime.
+3. Make body velocity and height derive from planted leg support.
+4. Keep our current visual model and debug stick intact.
+
+We should not do another "micro-tune the old controller" pass first.
+
+## Success Criteria For the New Runtime
+
+The new runtime is only good enough when all of these become true:
+
+- the spider can walk to a clicked point instead of visually teleport-dragging
+- at least two gait groups visibly alternate
+- feet stay planted until a leg is actually stepping
+- body height clearly reacts to leg support changes
+- the spider does not visibly float when crossing simple height changes
+- front, middle, and back legs all participate in locomotion
+- leg crossing is rare and understandable instead of constant
+
+## Iteration Rule
+
+Going forward, we should judge each spider locomotion pass against a simple 5-point counter:
+
+- if a pass creates visible progress, the counter stays where it is
+- if a pass mostly reintroduces the same failure mode, reduce the counter by 1
+- when the counter reaches 0, stop tweaking and hard-reset the locomotion runtime toward the Cymaera architecture
+
+Current status:
+
+- we are close enough to keep the feature alive
+- but structurally close enough to the limit that the next pass should already be the architecture pass, not another tuning pass
+
 ## Current Controller Notes
 
 ### In `SpyderControllerEntity`
@@ -240,6 +451,33 @@ The renderer currently:
 This is much better than the first versions, but still needs stronger constraints.
 
 ## Recommended Next Fixes
+
+## Iteration Rule
+
+From this point on, spider locomotion should be judged against a fixed checkpoint rule instead of just "looks a bit better".
+
+Every implementation pass gets a 5-point counter.
+
+- Start each pass at `5`
+- After testing in game, subtract `1` if the pass does not meet the current checkpoint
+- When the counter reaches `0`, stop tuning and do a sanity check
+- If the sanity check still says the system is going in circles, reset the approach and port the matching Cymaera workflow more directly
+
+### Current Checkpoint For The Next Pass
+
+This pass only counts as successful if all three conditions are true at the same time:
+
+- legs remain the primary driver and the body follows planted support instead of leading it
+- the spider shows visible forward locomotion instead of side-to-side jitter
+- planted feet stay near the contacted surface instead of hovering far above it or clipping deeply through it
+
+### Current Sanity Trigger
+
+If we burn all 5 points without meeting the checkpoint, the next move should be:
+
+1. freeze new tuning
+2. compare our control flow against Cymaera again
+3. replace the current walker ownership model with a more direct leg-state / step-state workflow instead of continuing to patch the same body-led loop
 
 ### Priority 1: Lift The Body Off The Surface Properly
 
